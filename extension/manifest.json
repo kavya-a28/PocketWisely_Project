@@ -1,0 +1,41 @@
+{
+  "name": "PocketWisely",
+  "version": "0.0.1",
+  "manifest_version": 3,
+  "description": "An AI-based shopping advisor to control impulse spending.",
+  "permissions": [
+    "scripting",
+    "storage",
+    "activeTab",
+    "tabs"
+  ],
+  "host_permissions": [
+    "*://*.amazon.in/*",
+    "*://*.flipkart.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.amazon.in/*",
+        "*://*.flipkart.com/*"
+      ],
+      "js": ["listener.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "register.html",
+        "register.css",
+        "register.js"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

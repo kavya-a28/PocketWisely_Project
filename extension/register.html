@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to PocketWisely</title>
+    <link rel="stylesheet" href="register.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to PocketWisely! 🧠</h1>
+        <p>Just one quick step to get started. This helps us personalize your experience.</p>
+        <form id="registration-form">
+            <div class="form-group">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Your Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <button type="submit">Save and Get Started</button>
+        </form>
+        <p id="success-message" class="hidden">Thanks! You're all set. You can close this tab.</p>
+    </div>
+    <script src="register.js"></script>
+</body>
+</html>
