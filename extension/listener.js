@@ -1,87 +1,75 @@
-// listener.js - DEFINITIVE FINAL VERSION
+// extension/listener.js
 
-console.log("🟢 PocketWisely listener is active. (Definitive Final Version)");
+console.log("🟢 PocketWisely listener is active.");
 
 // --- SELECTORS (Both Sites) ---
 const purchaseButtonSelectors = [
-    // --- Amazon's stable selectors ---
+    // --- Main Amazon Product Page Selectors ---
     '#add-to-cart-button',
     '#buy-now-button',
-    '[name^="submit.addToCart"]',
-    '[data-action="add-to-cart-button"]',
-    
-    // --- Flipkart's NEW structural selector ---
-    // This looks for a button inside a specific list item layout component
-    'li.col-6-12 button'
 
+    // --- Amazon Search Result & Listing Page Selectors ---
+    '[name^="submit.add-to-cart"]',
+    'input.a-button-input[type="submit"][data-asin]',
+    
+    // --- Flipkart Selector ---
+    'li.col-6-12 button'
 ].join(', ');
 
 
 // --- SCRAPING FUNCTIONS ---
 
-// --- AMAZON LOGIC (PRESERVED) ---
+// In listener.js, replace the function with this debug version
+// In listener.js, replace the function with this corrected version
+
 function scrapeAmazonData(button) {
-    // Strategy 1: Comparison Widget
-    const comparisonTable = button.closest('table[class*="desktopFaceoutStyle_comparisonTable"]');
-    if (comparisonTable) {
-        const table = button.closest('table[class*="comparisonTable"]');
-        if (!table) return null;
-        const buttonCell = button.closest('td');
-        if (!buttonCell) return null;
-        const buttonRow = buttonCell.parentElement;
-        const columnIndex = Array.from(buttonRow.children).indexOf(buttonCell);
-        const headerRow = table.querySelector('tbody > tr');
-        if (!headerRow || !headerRow.children[columnIndex]) return null;
-        const nameAndImageCell = headerRow.children[columnIndex];
-        const nameContainerEl = nameAndImageCell.querySelector('div[class*="titleStyle"]');
-        const imageEl = nameAndImageCell.querySelector('img');
-        let priceEl = null;
-        const allRows = table.querySelectorAll('tbody > tr');
-        for (const row of allRows) {
-            const firstCellInRow = row.children[0];
-            if (firstCellInRow && firstCellInRow.textContent.trim().toLowerCase() === 'price') {
-                const priceCell = row.children[columnIndex];
-                if (priceCell) priceEl = priceCell.querySelector('.a-price .a-offscreen');
-                break;
-            }
-        }
-        if (nameContainerEl && priceEl) {
-            const fullName = nameContainerEl.textContent.replace(/\s+/g, ' ').trim();
-            return { name: fullName, price: priceEl.innerText.trim(), image: imageEl ? imageEl.src : '' };
-        }
-    }
+    // --- The only change is in the line below ---
+    // We changed '[data-asin]' to 'div[data-asin]' to be more specific.
+    const productCard = button.closest('[data-component-type="s-search-result"], div[data-asin], .a-carousel-card');
 
-    // Strategy 2: Standard Listing Item
-    const containerSelectors = ['li.a-carousel-card', '.s-card-container', 'div.a-cardui', '[data-asin]', 'div[data-p13n-asin-metadata]', 'li.a-list-item', '.s-widget-spacing-large', 'div[data-component-id]'];
-    const productContainer = button.closest(containerSelectors.join(', '));
-    if (productContainer) {
-        let nameEl, priceEl, imageEl;
-        nameEl = productContainer.querySelector('div[class*="sponsored-products-truncator"], h2.a-text-normal > span, .p13n-sc-truncate-desktop-type2, a.a-link-normal[title]');
-        priceEl = productContainer.querySelector('.a-price .a-offscreen');
-        imageEl = productContainer.querySelector('img.s-image, img');
+    if (productCard) {
+        const nameSelectors = [
+            'h2 .a-text-normal',
+            '.a-size-base-plus.a-text-normal',
+            '._cDEzb_titleR3_fVNyM'
+        ].join(', ');
+        
+        const nameEl = productCard.querySelector(nameSelectors);
+        const priceEl = productCard.querySelector('.a-price-whole');
+
         if (nameEl && priceEl) {
-            const name = nameEl.textContent.trim() || (nameEl.title ? nameEl.title.trim() : '');
-            if (name) return { name: name, price: priceEl.innerText.trim(), image: imageEl ? imageEl.src : '' };
+            const name = nameEl.innerText.trim();
+            const price = "₹" + priceEl.innerText.trim().replace(/,/g, '');
+            const imageEl = productCard.querySelector('.s-image, .a-carousel-card img');
+            const image = imageEl ? imageEl.src : '';
+            return { name, price, image };
         }
-    }
-
-    // Strategy 3: Main Detail Page
-    const nameEl = document.querySelector('#productTitle');
-    const priceEl = document.querySelector('#corePrice_feature_div .a-offscreen, .a-price.a-text-price .a-offscreen, #price, .a-price-whole');
-    const imageEl = document.querySelector('#landingImage');
-    if (nameEl && priceEl) {
-        return { name: nameEl.textContent.trim(), price: priceEl.innerText.trim(), image: imageEl ? imageEl.src : '' };
     }
     
+    // Fallback strategy for main product detail pages
+    const nameEl = document.querySelector('#productTitle');
+    const priceEl = document.querySelector('.a-price-whole, #corePrice_feature_div .a-offscreen');
+    const imageEl = document.querySelector('#landingImage');
+
+    if (nameEl && priceEl) {
+        return { 
+            name: nameEl.innerText.trim(), 
+            price: priceEl.innerText.trim(), 
+            image: imageEl ? imageEl.src : '' 
+        };
+    }
+
+    console.error("PocketWisely could not find product details on this page.");
     return null;
 }
 
-// --- FLIPKART LOGIC (SEPARATE) ---
 function scrapeFlipkartDetailPage() {
     const nameEl = document.querySelector('span.B_NuCI'); 
-    if (!nameEl) return null; 
+    if (!nameEl) return null; // This is the line that was causing the error
+    
     const priceEl = document.querySelector('div._30jeq3._16Jk6d');
     const imageEl = document.querySelector('img._396cs4');
+    
     if (nameEl && priceEl) {
         return {
             name: nameEl.innerText.trim(),
@@ -96,23 +84,15 @@ function scrapeFlipkartDetailPage() {
 // --- Main Click Listener (Router Logic) ---
 document.body.addEventListener('click', function(event) {
     const clickedButton = event.target.closest(purchaseButtonSelectors);
+    
     if (clickedButton) {
-        let productData = null;
-        const hostname = window.location.hostname;
-        
-        // ✨ FINAL CHECK FOR FLIPKART
-        // This confirms it's the right button by checking its text content.
-        if (hostname.includes('flipkart')) {
-            const buttonText = clickedButton.textContent || "";
-            if (!buttonText.includes('Add to cart') && !buttonText.includes('Buy Now')) {
-                return; // This is not a purchase button, so we ignore the click.
-            }
-        }
-
         console.log('🛒 Purchase button clicked! Intercepting...');
         event.preventDefault();
         event.stopPropagation();
         event.stopImmediatePropagation();
+
+        let productData = null;
+        const hostname = window.location.hostname;
 
         if (hostname.includes('amazon')) {
             productData = scrapeAmazonData(clickedButton); 
@@ -120,11 +100,7 @@ document.body.addEventListener('click', function(event) {
             productData = scrapeFlipkartDetailPage(); 
         }
         
-        if (!productData) {
-            console.error("PocketWisely failed to scrape any product details.");
-        }
-        
-        console.log("Final scraped data being sent:", productData);
+        console.log("Final scraped data:", productData);
         chrome.runtime.sendMessage({
             action: "purchaseAttempt",
             data: productData

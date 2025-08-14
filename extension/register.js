@@ -1,6 +1,5 @@
-// extension/onboarding.js (Corrected and Renamed)
+// extension/register.js
 
-// It's best practice to define the backend URL in one place.
 const BACKEND_URL = 'http://127.0.0.1:5000';
 
 /**
@@ -20,8 +19,8 @@ async function getUserId() {
 }
 
 const form = document.getElementById('registration-form');
-const successMessage = document.getElementById('success-message'); // Assuming you have this element
-const errorMessage = document.getElementById('error-message'); // Assuming you have this for errors
+const successMessage = document.getElementById('success-message');
+const errorMessage = document.getElementById('error-message');
 
 form.addEventListener('submit', async function(event) {
     event.preventDefault();
@@ -30,29 +29,18 @@ form.addEventListener('submit', async function(event) {
     const email = document.getElementById('email').value;
     const button = form.querySelector('button');
 
-    if (!name || !email) {
-        return; // The 'required' attribute on the inputs should prevent this
-    }
-
-    // --- Provide user feedback ---
     button.disabled = true;
     button.textContent = 'Registering...';
     if (errorMessage) errorMessage.style.display = 'none';
 
-
-    // --- THE CRITICAL FIX ---
-    // 1. Get the unique User ID first.
-    const userId = await getUserId();
-
-    // 2. Create the complete payload that the backend expects.
-    const registrationData = {
-        userId: userId,
-        name: name,
-        email: email
-    };
-
-    // 3. Send the complete data to your backend API.
     try {
+        const userId = await getUserId();
+        const registrationData = {
+            userId: userId,
+            name: name,
+            email: email
+        };
+
         const response = await fetch(`${BACKEND_URL}/api/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -61,33 +49,32 @@ form.addEventListener('submit', async function(event) {
 
         const responseData = await response.json();
 
-        if (response.ok) {
-            // If registration is successful on the backend...
-            console.log('Backend response:', responseData);
-
-            // ...then save the registration status in the extension.
-            await chrome.storage.local.set({ 
-                isRegistered: true,
-                userName: name,
-                userEmail: email 
-            });
-
-            // Show success and maybe close the tab after a delay
-            form.style.display = 'none';
-            if (successMessage) successMessage.style.display = 'block';
-            
-            // Automatically close the onboarding tab after 2 seconds
-            setTimeout(() => {
-                window.close();
-            }, 2000);
-
-        } else {
-            // If the backend returned an error (e.g., user exists)
+        if (!response.ok) {
             throw new Error(responseData.error || 'Registration failed.');
         }
+
+        // --- ✅ THE KEY CHANGE IS HERE ---
+        // On success, save all user info into ONE object for consistency.
+        await chrome.storage.local.set({
+            pocketWiselyUser: {
+                userId: userId,
+                name: name,
+                email: email
+            }
+        });
+
+        console.log('User registered and data saved:', { pocketWiselyUser: registrationData });
+
+        // Show success and close the tab
+        form.style.display = 'none';
+        if (successMessage) successMessage.style.display = 'block';
+
+        setTimeout(() => {
+            window.close();
+        }, 2000);
+
     } catch (error) {
-        // If there was a network error or an error from the backend
-        console.error('Error sending data to backend:', error);
+        console.error('Error during registration:', error);
         if (errorMessage) {
             errorMessage.textContent = error.message;
             errorMessage.style.display = 'block';
