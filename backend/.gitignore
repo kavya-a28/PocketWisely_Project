@@ -1,0 +1,18 @@
+# .gitignore
+
+# Python artifacts
+__pycache__/
+*.pyc
+
+# Virtual Environment (This is the most important part!)
+env/
+venv/
+.venv/
+
+# Secrets file (if you decide to use one later)
+.env
+
+# IDE and OS files
+.vscode/
+.idea/
+*.DS_Store
