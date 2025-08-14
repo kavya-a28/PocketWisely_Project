@@ -1,150 +1,130 @@
-// listener.js
+// listener.js - DEFINITIVE FINAL VERSION
 
-// This message is the proof that you are running the correct, final version of the code.
-console.log("✅ PocketWisely Listener.js --- VERSION 16 (Clean Titles) --- is running.");
+console.log("🟢 PocketWisely listener is active. (Definitive Final Version)");
 
-// Selectors for all possible "Add to Cart" or "Buy Now" buttons on Amazon
+// --- SELECTORS (Both Sites) ---
 const purchaseButtonSelectors = [
+    // --- Amazon's stable selectors ---
     '#add-to-cart-button',
     '#buy-now-button',
     '[name^="submit.addToCart"]',
-    '[data-action="add-to-cart-button"]'
-];
-
-
-/**
- * The DEFINITIVE function to handle the "Compare with similar items" table.
- * This version now returns ONLY the product name, without the "This Item:" prefix.
- * @param {HTMLElement} button - The button element that was clicked.
- * @returns {object|null} The scraped product data.
- */
-function scrapeComparisonTable(button) {
-    const table = button.closest('table[class*="comparisonTable"]');
-    if (!table) return null;
-
-    const buttonCell = button.closest('td');
-    if (!buttonCell) return null;
-
-    // STEP 1: Determine the exact column index of the clicked button.
-    const buttonRow = buttonCell.parentElement;
-    const columnIndex = Array.from(buttonRow.children).indexOf(buttonCell);
-
-    // STEP 2: Find the main header cell in the first row at the same column index.
-    const headerRow = table.querySelector('tbody > tr');
-    if (!headerRow || !headerRow.children[columnIndex]) return null;
+    '[data-action="add-to-cart-button"]',
     
-    const nameAndImageCell = headerRow.children[columnIndex];
-    const nameContainerEl = nameAndImageCell.querySelector('div[class*="titleStyle"]');
-    const imageEl = nameAndImageCell.querySelector('img');
+    // --- Flipkart's NEW structural selector ---
+    // This looks for a button inside a specific list item layout component
+    'li.col-6-12 button'
 
-    // STEP 3: Find the Price by first finding the "Price" row, then getting the correct cell.
-    let priceEl = null;
-    const allRows = table.querySelectorAll('tbody > tr');
-    for (const row of allRows) {
-        const firstCellInRow = row.children[0];
-        if (firstCellInRow && firstCellInRow.textContent.trim().toLowerCase() === 'price') {
-            const priceCell = row.children[columnIndex];
-            if (priceCell) {
-                priceEl = priceCell.querySelector('.a-price .a-offscreen');
+].join(', ');
+
+
+// --- SCRAPING FUNCTIONS ---
+
+// --- AMAZON LOGIC (PRESERVED) ---
+function scrapeAmazonData(button) {
+    // Strategy 1: Comparison Widget
+    const comparisonTable = button.closest('table[class*="desktopFaceoutStyle_comparisonTable"]');
+    if (comparisonTable) {
+        const table = button.closest('table[class*="comparisonTable"]');
+        if (!table) return null;
+        const buttonCell = button.closest('td');
+        if (!buttonCell) return null;
+        const buttonRow = buttonCell.parentElement;
+        const columnIndex = Array.from(buttonRow.children).indexOf(buttonCell);
+        const headerRow = table.querySelector('tbody > tr');
+        if (!headerRow || !headerRow.children[columnIndex]) return null;
+        const nameAndImageCell = headerRow.children[columnIndex];
+        const nameContainerEl = nameAndImageCell.querySelector('div[class*="titleStyle"]');
+        const imageEl = nameAndImageCell.querySelector('img');
+        let priceEl = null;
+        const allRows = table.querySelectorAll('tbody > tr');
+        for (const row of allRows) {
+            const firstCellInRow = row.children[0];
+            if (firstCellInRow && firstCellInRow.textContent.trim().toLowerCase() === 'price') {
+                const priceCell = row.children[columnIndex];
+                if (priceCell) priceEl = priceCell.querySelector('.a-price .a-offscreen');
+                break;
             }
-            break; 
+        }
+        if (nameContainerEl && priceEl) {
+            const fullName = nameContainerEl.textContent.replace(/\s+/g, ' ').trim();
+            return { name: fullName, price: priceEl.innerText.trim(), image: imageEl ? imageEl.src : '' };
         }
     }
-    
-    // STEP 4: Assemble and return the complete data.
-    if (nameContainerEl && priceEl) {
-        // Get the full product name, and clean up any extra whitespace.
-        const fullName = nameContainerEl.textContent.replace(/\s+/g, ' ').trim();
 
+    // Strategy 2: Standard Listing Item
+    const containerSelectors = ['li.a-carousel-card', '.s-card-container', 'div.a-cardui', '[data-asin]', 'div[data-p13n-asin-metadata]', 'li.a-list-item', '.s-widget-spacing-large', 'div[data-component-id]'];
+    const productContainer = button.closest(containerSelectors.join(', '));
+    if (productContainer) {
+        let nameEl, priceEl, imageEl;
+        nameEl = productContainer.querySelector('div[class*="sponsored-products-truncator"], h2.a-text-normal > span, .p13n-sc-truncate-desktop-type2, a.a-link-normal[title]');
+        priceEl = productContainer.querySelector('.a-price .a-offscreen');
+        imageEl = productContainer.querySelector('img.s-image, img');
+        if (nameEl && priceEl) {
+            const name = nameEl.textContent.trim() || (nameEl.title ? nameEl.title.trim() : '');
+            if (name) return { name: name, price: priceEl.innerText.trim(), image: imageEl ? imageEl.src : '' };
+        }
+    }
+
+    // Strategy 3: Main Detail Page
+    const nameEl = document.querySelector('#productTitle');
+    const priceEl = document.querySelector('#corePrice_feature_div .a-offscreen, .a-price.a-text-price .a-offscreen, #price, .a-price-whole');
+    const imageEl = document.querySelector('#landingImage');
+    if (nameEl && priceEl) {
+        return { name: nameEl.textContent.trim(), price: priceEl.innerText.trim(), image: imageEl ? imageEl.src : '' };
+    }
+    
+    return null;
+}
+
+// --- FLIPKART LOGIC (SEPARATE) ---
+function scrapeFlipkartDetailPage() {
+    const nameEl = document.querySelector('span.B_NuCI'); 
+    if (!nameEl) return null; 
+    const priceEl = document.querySelector('div._30jeq3._16Jk6d');
+    const imageEl = document.querySelector('img._396cs4');
+    if (nameEl && priceEl) {
         return {
-            name: fullName, // Return just the clean name, without the context label.
-            price: priceEl.innerText.trim(),
+            name: nameEl.innerText.trim(),
+            price: priceEl.textContent.trim(),
             image: imageEl ? imageEl.src : ''
         };
     }
-    
     return null;
 }
 
 
-/**
- * The main scraping function, acting as a router to decide which scraping strategy to use.
- * @param {HTMLElement} button The button element that was clicked.
- * @returns {object|null} An object with {name, price, image} or null if not found.
- */
-function scrapeDataForClickedButton(button) {
-    // --- STRATEGY 1: Check if we are in the "Compare with similar items" table FIRST ---
-    const comparisonTable = button.closest('table[class*="desktopFaceoutStyle_comparisonTable"]');
-    if (comparisonTable) {
-        console.log("Strategy 1: Using Comparison Table scraper.");
-        return scrapeComparisonTable(button);
-    }
-    
-    // --- STRATEGY 2: Handle ALL other card/list/grid components ---
-    const containerSelectors = [
-        'li.a-carousel-card',
-        '.s-card-container',
-        'div.a-cardui',
-        '[data-asin]',
-        'div[data-p13n-asin-metadata]',
-        'li.a-list-item',
-        '.s-widget-spacing-large',
-        'div[data-component-id]'
-    ];
-    const productContainer = button.closest(containerSelectors.join(', '));
-
-    if (productContainer) {
-        console.log("Strategy 2: Found a generic product container. Using waterfall logic.");
-        let nameEl, priceEl, imageEl;
-
-        // Name Waterfall
-        nameEl = productContainer.querySelector('div[class*="sponsored-products-truncator"]');
-        if (!nameEl) nameEl = productContainer.querySelector('h2.a-text-normal > span');
-        if (!nameEl) nameEl = productContainer.querySelector('.p13n-sc-truncate-desktop-type2');
-        if (!nameEl) nameEl = productContainer.querySelector('a.a-link-normal[title]');
+// --- Main Click Listener (Router Logic) ---
+document.body.addEventListener('click', function(event) {
+    const clickedButton = event.target.closest(purchaseButtonSelectors);
+    if (clickedButton) {
+        let productData = null;
+        const hostname = window.location.hostname;
         
-        // Price & Image
-        priceEl = productContainer.querySelector('.a-price .a-offscreen');
-        imageEl = productContainer.querySelector('img.s-image, img');
-
-        if (nameEl && priceEl) {
-            const name = nameEl.textContent.trim() || (nameEl.title ? nameEl.title.trim() : '');
-            if (name) {
-                 return { name: name, price: priceEl.innerText.trim(), image: imageEl ? imageEl.src : '' };
+        // ✨ FINAL CHECK FOR FLIPKART
+        // This confirms it's the right button by checking its text content.
+        if (hostname.includes('flipkart')) {
+            const buttonText = clickedButton.textContent || "";
+            if (!buttonText.includes('Add to cart') && !buttonText.includes('Buy Now')) {
+                return; // This is not a purchase button, so we ignore the click.
             }
         }
-    }
 
-    // --- STRATEGY 3: Main Page as the TRUE last resort ---
-    else {
-        console.log("Strategy 3: No container found. Assuming this is the main page 'Add to Cart' button.");
-        const nameEl = document.querySelector('#productTitle');
-        const priceEl = document.querySelector('#corePrice_feature_div .a-offscreen, .a-price.a-text-price .a-offscreen, #price');
-        const imageEl = document.querySelector('#landingImage');
-
-        if (nameEl && priceEl) {
-            return { name: nameEl.textContent.trim(), price: priceEl.innerText.trim(), image: imageEl ? imageEl.src : '' };
-        }
-    }
-
-    console.error("PocketWisely failed to scrape any product details using any available strategy.");
-    return null;
-}
-
-
-// The main event listener remains the same.
-document.body.addEventListener('click', function(event) {
-    const clickedButton = event.target.closest(purchaseButtonSelectors.join(', '));
-
-    if (clickedButton) {
         console.log('🛒 Purchase button clicked! Intercepting...');
         event.preventDefault();
         event.stopPropagation();
         event.stopImmediatePropagation();
 
-        const productData = scrapeDataForClickedButton(clickedButton);
+        if (hostname.includes('amazon')) {
+            productData = scrapeAmazonData(clickedButton); 
+        } else if (hostname.includes('flipkart')) {
+            productData = scrapeFlipkartDetailPage(); 
+        }
+        
+        if (!productData) {
+            console.error("PocketWisely failed to scrape any product details.");
+        }
+        
         console.log("Final scraped data being sent:", productData);
-
         chrome.runtime.sendMessage({
             action: "purchaseAttempt",
             data: productData
