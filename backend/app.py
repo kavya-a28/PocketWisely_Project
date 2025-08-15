@@ -1,10 +1,10 @@
 # backend/app.py
 
 from flask import Flask, request, jsonify
-from flask_migrate import Migrate
-from flask_cors import CORS
+from flask_migrate import Migrate # type: ignore
+from flask_cors import CORS # type: ignore
 from models import db, User, PurchaseEvent
-from sqlalchemy import desc
+from sqlalchemy import desc # type: ignore
 
 def create_app():
     app = Flask(__name__)
@@ -116,7 +116,27 @@ def create_app():
         event.status = 'purchased'
         db.session.commit()
         return jsonify({"message": f"Confirmed purchase for event {event_id}"})
+# In app.py, add this new function
 
+    @app.route('/api/event/log-survey', methods=['POST'])
+    def log_survey():
+        """Receives and saves the user's answers to the survey questions."""
+        data = request.get_json()
+        event_id = data.get('eventId')
+        answers = data.get('answers', {})
+        
+        if not event_id: return jsonify({"error": "Missing eventId"}), 400
+        
+        event = PurchaseEvent.query.get(event_id)
+        if not event: return jsonify({"error": "Event not found"}), 404
+            
+        # Save each answer to its respective column
+        event.q_reason = answers.get('reason')
+        event.q_budget = answers.get('budget')
+        event.q_wait = answers.get('wait')
+        
+        db.session.commit()
+        return jsonify({"message": "Survey answers logged successfully"}), 200
     return app
 
 app = create_app()
