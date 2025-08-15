@@ -1,37 +1,15 @@
 # backend/app.py
 
-import os
 from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from flask_cors import CORS
-from models import db, User, ProductEvent
-
-def generate_purchase_analysis(user, product_data):
-    """
-    This is your placeholder AI/ML model.
-    It generates a simple analysis based on the user's history.
-    """
-    product_name = product_data.get('name', 'this item')
-    keywords = product_name.split()[:2]
-    
-    if len(user.events) > 1 and len(keywords) > 0:
-        similar_events = [
-            e for e in user.events 
-            if e.product_name and keywords[0].lower() in e.product_name.lower()
-        ]
-        if len(similar_events) > 3:
-            return f"You've looked at items like '{keywords[0]}' {len(similar_events)} times recently. Are you sure you need another?"
-
-    price = product_data.get('price', 'this amount')
-    return f"Think about it: investing {price} instead could be a step towards your long-term financial goals."
-
+from models import db, User, PurchaseEvent
+from sqlalchemy import desc
 
 def create_app():
-    """Creates and configures the Flask application."""
     app = Flask(__name__)
-    CORS(app) 
+    CORS(app, resources={r"/api/*": {"origins": "*"}}) 
 
-    # --- Database Configuration ---
     DB_USER = "root"
     DB_PASSWORD = "pass123"
     DB_HOST = "127.0.0.1"
@@ -43,8 +21,6 @@ def create_app():
     db.init_app(app)
     migrate = Migrate(app, db)
 
-    # --- API Endpoints ---
-
     @app.route('/')
     def index():
         return "<h1>PocketWisely Backend is Running!</h1>"
@@ -52,75 +28,94 @@ def create_app():
     @app.route('/api/register', methods=['POST'])
     def register_user():
         data = request.get_json()
-        if not data: return jsonify({"error": "Invalid JSON"}), 400
         user_id, name, email = data.get('userId'), data.get('name'), data.get('email')
         if not all([user_id, name, email]): return jsonify({"error": "Missing required fields"}), 400
-        if User.query.get(user_id) or User.query.filter_by(email=email).first(): return jsonify({"error": "User with this ID or email already exists"}), 409
+        if User.query.get(user_id) or User.query.filter_by(email=email).first():
+            return jsonify({"error": "User with this ID or email already exists"}), 409
         new_user = User(id=user_id, name=name, email=email)
         db.session.add(new_user)
         db.session.commit()
         return jsonify({"message": f"User '{name}' registered successfully"}), 201
 
-    @app.route('/api/product_event', methods=['POST'])
-    def product_event():
+    @app.route('/api/event/view', methods=['POST'])
+    def view_event():
+        """
+        Creates a 'viewed' event or increments the view_count of an existing one.
+        """
         data = request.get_json()
-        if not data: return jsonify({"error": "Invalid JSON"}), 400
-
-        user_info = data.get('userInfo', {})
+        user_id = data.get('userId')
+        product_data = data.get('productData', {})
+        product_name = product_data.get('name')
         
-        # --- ✅ THIS IS THE FIX ---
-        # It handles cases where the scraper fails and sends null productData
-        product_data = data.get('productData') or {}
-        
-        user_id = user_info.get('userId')
-        action_type = data.get('buttonType', 'add_to_cart') 
+        if not User.query.get(user_id): return jsonify({"error": "User not found"}), 404
 
-        if not user_id: return jsonify({"analysis": "Could not identify user. Please register."})
+        # Check for an existing, non-purchased event for this product
+        existing_event = PurchaseEvent.query.filter(
+            PurchaseEvent.user_id == user_id,
+            PurchaseEvent.product_name == product_name,
+            PurchaseEvent.status != 'purchased'
+        ).order_by(desc(PurchaseEvent.event_date)).first()
 
-        user = User.query.get(user_id)
-        if not user: return jsonify({"analysis": "User not found in our records."})
+        if existing_event:
+            existing_event.view_count += 1
+            db.session.commit()
+            return jsonify({"message": "View count incremented", "eventId": existing_event.id})
+        else:
+            new_event = PurchaseEvent(
+                user_id=user_id,
+                product_name=product_name,
+                price=float(product_data.get('price', 0)),
+                image_url=product_data.get('image'),
+                status='viewed',
+                view_count=1
+            )
+            db.session.add(new_event)
+            db.session.commit()
+            return jsonify({"message": "Event created", "eventId": new_event.id}), 201
 
-        # Now, the .get() calls below are safe even if product_data was originally None
-        new_event = ProductEvent(
-            user_id=user.id,
-            product_name=product_data.get('name'),
-            price_text=product_data.get('price'),
-            image_url=product_data.get('image'),
-            action_type=action_type
-        )
-        db.session.add(new_event)
-        db.session.commit()
-        
-        analysis_message = generate_purchase_analysis(user, product_data)
-
-        return jsonify({
-            "analysis": analysis_message,
-            "eventId": new_event.id
-        })
-
-    @app.route('/api/update_event_decision', methods=['POST'])
-    def update_event_decision():
+    @app.route('/api/event/decide', methods=['POST'])
+    def decide_event():
+        """Updates the event with the user's decision from the popup."""
         data = request.get_json()
-        if not data: return jsonify({"error": "Invalid JSON"}), 400
-
         event_id = data.get('eventId')
-        decision = data.get('decision')
+        decision = data.get('decision') # 'interested' or 'discarded'
+        if not all([event_id, decision]): return jsonify({"error": "Missing fields"}), 400
+        
+        event = PurchaseEvent.query.get(event_id)
+        if not event: return jsonify({"error": "Event not found"}), 404
+        
+        event.decision = decision
+        db.session.commit()
+        return jsonify({"message": f"Decision '{decision}' recorded"})
 
-        if not all([event_id, decision]): return jsonify({"error": "Missing eventId or decision"}), 400
+    @app.route('/api/event/update-status', methods=['POST'])
+    def update_event_status():
+        """Updates an event's status (e.g., to 'added_to_cart' or 'buy_now')."""
+        data = request.get_json()
+        event_id = data.get('eventId')
+        new_status = data.get('newStatus')
+        if not all([event_id, new_status]): return jsonify({"error": "Missing fields"}), 400
 
-        event = ProductEvent.query.get(event_id)
+        event = PurchaseEvent.query.get(event_id)
         if not event: return jsonify({"error": "Event not found"}), 404
 
-        event.decision = decision
-        
-        if decision == 'proceeded':
-            if event.action_type == 'buy_now':
-                event.status = 'buying_now'
-            else:
-                event.status = 'added_to_cart'
-
+        event.status = new_status
         db.session.commit()
-        return jsonify({"message": f"Event {event_id} updated successfully."}), 200
+        return jsonify({"message": f"Status updated to '{new_status}'"})
+
+    @app.route('/api/event/confirm-purchase', methods=['POST'])
+    def confirm_purchase():
+        """Updates a single event to 'purchased'."""
+        data = request.get_json()
+        event_id = data.get('eventId')
+        if not event_id: return jsonify({"error": "Missing eventId"}), 400
+        
+        event = PurchaseEvent.query.get(event_id)
+        if not event: return jsonify({"error": "Event not found"}), 404
+
+        event.status = 'purchased'
+        db.session.commit()
+        return jsonify({"message": f"Confirmed purchase for event {event_id}"})
 
     return app
 
