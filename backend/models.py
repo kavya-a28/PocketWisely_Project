@@ -19,6 +19,8 @@ class User(db.Model):
     def __repr__(self):
         return f"<User {self.id} | {self.name}>"
 
+# In models.py
+
 class ProductEvent(db.Model):
     """
     Represents a single intercepted purchase event.
@@ -28,12 +30,19 @@ class ProductEvent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
     product_name = db.Column(db.String(512), nullable=True)
-    price_text = db.Column(db.String(50), nullable=True) # Storing price as text (e.g., "₹1,499.00")
+    price_text = db.Column(db.String(50), nullable=True)
     image_url = db.Column(db.String(1024), nullable=True)
     event_date = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # --- NEW COLUMNS ---
+    # The status of the event in the purchase funnel.
+    status = db.Column(db.String(20), nullable=False, default='viewed') # statuses: viewed, added_to_cart, purchased
+    
+    # The user's decision on the popup.
+    decision = db.Column(db.String(20), nullable=True) # decisions: proceeded, delayed
+    action_type = db.Column(db.String(20), nullable=False, default='add_to_cart') # e.g., 'add_to_cart', 'buy_now'
     def __repr__(self):
-        return f"<Event by {self.user_id}: {self.product_name}>"
+        return f"<Event {self.id}: {self.product_name} - {self.action_type}>"
 
 # Note: The original 'Purchase' model is no longer needed if we use 'ProductEvent'
 # for all logging. If you still want to log *confirmed* purchases separately,
