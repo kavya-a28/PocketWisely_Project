@@ -1,13 +1,16 @@
 # backend/app.py
 
 from flask import Flask, request, jsonify
-from flask_migrate import Migrate # type: ignore
-from flask_cors import CORS # type: ignore
+from flask_migrate import Migrate
+from flask_cors import CORS
 from models import db, User, PurchaseEvent
-from sqlalchemy import desc # type: ignore
+from sqlalchemy import desc
+# Make sure you have your ml_logic.py file in the same folder
+from ml_logic import get_prediction_and_advice
 
 def create_app():
     app = Flask(__name__)
+    # ✅ FIXED: Corrected CORS policy to allow requests from any origin to any /api/ endpoint.
     CORS(app, resources={r"/api/*": {"origins": "*"}}) 
 
     DB_USER = "root"
@@ -39,35 +42,29 @@ def create_app():
 
     @app.route('/api/event/view', methods=['POST'])
     def view_event():
-        """
-        Creates a 'viewed' event or increments the view_count of an existing one.
-        """
+        """Creates the initial 'viewed' event or increments its view_count."""
         data = request.get_json()
-        user_id = data.get('userId')
-        product_data = data.get('productData', {})
+        user_id, product_data = data.get('userId'), data.get('productData', {})
         product_name = product_data.get('name')
-        
         if not User.query.get(user_id): return jsonify({"error": "User not found"}), 404
-
-        # Check for an existing, non-purchased event for this product
+        
         existing_event = PurchaseEvent.query.filter(
             PurchaseEvent.user_id == user_id,
             PurchaseEvent.product_name == product_name,
-            PurchaseEvent.status != 'purchased'
+            PurchaseEvent.status.in_(['viewed', 'avoided'])
         ).order_by(desc(PurchaseEvent.event_date)).first()
 
         if existing_event:
             existing_event.view_count += 1
+            existing_event.status = 'viewed'
+            existing_event.decision = None
             db.session.commit()
             return jsonify({"message": "View count incremented", "eventId": existing_event.id})
         else:
             new_event = PurchaseEvent(
-                user_id=user_id,
-                product_name=product_name,
-                price=float(product_data.get('price', 0)),
-                image_url=product_data.get('image'),
-                status='viewed',
-                view_count=1
+                user_id=user_id, product_name=product_name,
+                price=float(str(product_data.get('price', '0')).replace('₹', '').replace(',', '')),
+                image_url=product_data.get('image'), status='viewed', view_count=1
             )
             db.session.add(new_event)
             db.session.commit()
@@ -75,25 +72,71 @@ def create_app():
 
     @app.route('/api/event/decide', methods=['POST'])
     def decide_event():
-        """Updates the event with the user's decision from the popup."""
+        """Updates the event with the user's initial decision from the popup."""
         data = request.get_json()
-        event_id = data.get('eventId')
-        decision = data.get('decision') # 'interested' or 'discarded'
+        event_id, decision = data.get('eventId'), data.get('decision')
         if not all([event_id, decision]): return jsonify({"error": "Missing fields"}), 400
         
         event = PurchaseEvent.query.get(event_id)
         if not event: return jsonify({"error": "Event not found"}), 404
         
         event.decision = decision
+        if decision == 'discarded':
+            event.status = 'avoided'
+
         db.session.commit()
         return jsonify({"message": f"Decision '{decision}' recorded"})
 
+    @app.route('/api/analyze-and-advise', methods=['POST'])
+    def analyze_and_advise():
+        """Receives survey answers, runs the ML model, saves the prediction, and returns advice."""
+        data = request.get_json()
+        event_id, answers = data.get('eventId'), data.get('answers', {})
+        if not event_id: return jsonify({"error": "Missing eventId"}), 400
+        
+        event = PurchaseEvent.query.get(event_id)
+        if not event: return jsonify({"error": "Event not found"}), 404
+            
+        event.q_reason, event.q_budget, event.q_wait = answers.get('reason'), answers.get('budget'), answers.get('wait')
+        
+        event_data_for_ml = {
+            'price': event.price, 'view_count': event.view_count, 'event_date': event.event_date,
+            'product_name': event.product_name, 'q_reason': event.q_reason,
+            'q_budget': event.q_budget, 'q_wait': event.q_wait
+        }
+        
+        ml_result = get_prediction_and_advice(event_data_for_ml)
+        
+        event.model_prediction = ml_result['prediction']
+        event.model_confidence = ml_result['confidence']
+        
+        db.session.commit()
+        return jsonify(ml_result['advice'])
+
+    @app.route('/api/event/log-final-decision', methods=['POST'])
+    def log_final_decision():
+        """Logs the user's final decision after seeing the model's advice."""
+        data = request.get_json()
+        event_id, final_decision = data.get('eventId'), data.get('finalDecision')
+        if not all([event_id, final_decision]): return jsonify({"error": "Missing fields"}), 400
+        
+        event = PurchaseEvent.query.get(event_id)
+        if not event: return jsonify({"error": "Event not found"}), 404
+        
+        # ✅ FIXED: Corrected column name to match models.py
+        event.final_user_decision = final_decision
+        
+        if final_decision == 'avoided_after_advice':
+            event.status = 'avoided'
+        
+        db.session.commit()
+        return jsonify({"message": "Final decision logged"})
+
     @app.route('/api/event/update-status', methods=['POST'])
     def update_event_status():
-        """Updates an event's status (e.g., to 'added_to_cart' or 'buy_now')."""
+        """Updates an event's status to 'added_to_cart' or 'buy_now'."""
         data = request.get_json()
-        event_id = data.get('eventId')
-        new_status = data.get('newStatus')
+        event_id, new_status = data.get('eventId'), data.get('newStatus')
         if not all([event_id, new_status]): return jsonify({"error": "Missing fields"}), 400
 
         event = PurchaseEvent.query.get(event_id)
@@ -103,43 +146,32 @@ def create_app():
         db.session.commit()
         return jsonify({"message": f"Status updated to '{new_status}'"})
 
-    @app.route('/api/event/confirm-purchase', methods=['POST'])
-    def confirm_purchase():
-        """Updates a single event to 'purchased'."""
+    @app.route('/api/event/confirm-purchases', methods=['POST'])
+    def confirm_purchases():
+        """Updates events to 'purchased' based on names from the confirmation page."""
         data = request.get_json()
-        event_id = data.get('eventId')
-        if not event_id: return jsonify({"error": "Missing eventId"}), 400
+        user_id, purchased_product_names = data.get('userId'), data.get('productNames', [])
+        if not all([user_id, purchased_product_names]): return jsonify({"error": "Missing fields"}), 400
         
-        event = PurchaseEvent.query.get(event_id)
-        if not event: return jsonify({"error": "Event not found"}), 404
+        updated_count = 0
+        for name in purchased_product_names:
+            event_to_update = PurchaseEvent.query.filter(
+                PurchaseEvent.user_id == user_id,
+                PurchaseEvent.product_name.like(f"%{name[:50]}%"),
+                PurchaseEvent.status.in_(['added_to_cart', 'buy_now'])
+            ).order_by(desc(PurchaseEvent.event_date)).first()
 
-        event.status = 'purchased'
-        db.session.commit()
-        return jsonify({"message": f"Confirmed purchase for event {event_id}"})
-# In app.py, add this new function
-
-    @app.route('/api/event/log-survey', methods=['POST'])
-    def log_survey():
-        """Receives and saves the user's answers to the survey questions."""
-        data = request.get_json()
-        event_id = data.get('eventId')
-        answers = data.get('answers', {})
-        
-        if not event_id: return jsonify({"error": "Missing eventId"}), 400
-        
-        event = PurchaseEvent.query.get(event_id)
-        if not event: return jsonify({"error": "Event not found"}), 404
-            
-        # Save each answer to its respective column
-        event.q_reason = answers.get('reason')
-        event.q_budget = answers.get('budget')
-        event.q_wait = answers.get('wait')
+            if event_to_update:
+                event_to_update.status = 'purchased'
+                updated_count += 1
         
         db.session.commit()
-        return jsonify({"message": "Survey answers logged successfully"}), 200
+        return jsonify({"message": f"Confirmed {updated_count} purchases."})
+
     return app
 
 app = create_app()
 
+# ✅ FIXED: Corrected the typo in the main execution block
 if __name__ == '__main__':
     app.run(debug=True)

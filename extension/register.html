@@ -4,24 +4,120 @@
     <meta charset="UTF-8">
     <title>Welcome to PocketWisely</title>
     <link rel="stylesheet" href="register.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to PocketWisely! 🧠</h1>
-        <p>Just one quick step to get started. This helps us personalize your experience.</p>
-        <form id="registration-form">
-            <div class="form-group">
-                <label for="name">Your Name</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Your Email</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <button type="submit">Save and Get Started</button>
-        </form>
-        <p id="success-message" class="hidden">Thanks! You're all set. You can close this tab.</p>
+    <!-- Floating Background Elements -->
+    <div class="bg-animation">
+        <div class="floating-icon" style="--delay: 0s; --duration: 6s; left: 10%; top: 10%;"><i class="fas fa-chart-line"></i></div>
+        <div class="floating-icon" style="--delay: -2s; --duration: 8s; left: 80%; top: 70%;"><i class="fas fa-coins"></i></div>
+        <div class="floating-icon" style="--delay: -4s; --duration: 7s; left: 75%; top: 30%;"><i class="fas fa-piggy-bank"></i></div>
+        <div class="floating-icon" style="--delay: -1s; --duration: 9s; left: 20%; top: 80%;"><i class="fas fa-brain"></i></div>
+        <div class="floating-icon" style="--delay: -3s; --duration: 5s; left: 90%; top: 50%;"><i class="fas fa-wallet"></i></div>
     </div>
+
+    <div class="container">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo-icon">
+                <div class="investment-base">
+                    <div class="chart-bars">
+                        <div class="bar" style="--height: 20%; --delay: 0.1s;"></div>
+                        <div class="bar" style="--height: 40%; --delay: 0.2s;"></div>
+                        <div class="bar" style="--height: 60%; --delay: 0.3s;"></div>
+                        <div class="bar" style="--height: 80%; --delay: 0.4s;"></div>
+                        <div class="bar" style="--height: 100%; --delay: 0.5s;"></div>
+                    </div>
+                    <div class="growth-arrow">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                </div>
+                <div class="smart-brain">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="dollar-signs">
+                    <span class="dollar">$</span>
+                    <span class="dollar">$</span>
+                    <span class="dollar">$</span>
+                </div>
+            </div>
+            <h1 class="brand-name">
+                <span class="brand-text">PocketWisely</span>
+                <!-- ✨ MODIFIED: Updated the tagline -->
+                <div class="brand-tagline">Think Before You Spend</div>
+            </h1>
+        </div>
+
+        <!-- Welcome Content -->
+        <div class="welcome-content">
+            <h2 class="welcome-title">
+                <span class="wave">👋</span> Welcome to Your Financial Future!
+            </h2>
+            <p class="welcome-description">Redefine shopping—transform every click into a chance to invest in your dreams.
+            </p>
+        </div>
+
+        <!-- Registration Form -->
+        <form id="registration-form" class="registration-form">
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="name" name="name" required placeholder=" ">
+                    <label for="name">Your Name</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input type="email" id="email" name="email" required placeholder=" ">
+                    <label for="email">Your Email</label>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <span class="btn-text">Get Started with Smart Investing</span>
+                <div class="btn-loader">
+                    <div class="loader-spinner"></div>
+                </div>
+                <div class="btn-success">
+                    <i class="fas fa-check"></i>
+                </div>
+            </button>
+        </form>
+
+        <!-- Success Message -->
+        <div id="success-message" class="success-message hidden">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>🎉 You're All Set!</h3>
+            <p>Welcome to PocketWisely! Your journey to smarter investments starts now.</p>
+            <div class="closing-timer">
+                <div class="timer-circle">
+                    <div class="timer-fill"></div>
+                </div>
+                <span>Closing automatically...</span>
+            </div>
+        </div>
+
+        <!-- Trust Indicators -->
+        <div class="trust-indicators">
+            <div class="trust-item">
+                <i class="fas fa-shield-alt"></i>
+                <span>Secure & Private</span>
+            </div>
+            <div class="trust-item">
+                <i class="fas fa-users"></i>
+                <span>10K+ Happy Users</span>
+            </div>
+            <div class="trust-item">
+                <i class="fas fa-chart-line"></i>
+                <span>AI-Powered Insights</span>
+            </div>
+        </div>
+    </div>
+
     <script src="register.js"></script>
 </body>
 </html>

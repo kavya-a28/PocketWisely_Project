@@ -1,0 +1,28 @@
+<svg width="100" height="100" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="grad_wallet" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#2c3e50"/>
+            <stop offset="1" stop-color="#3498db"/>
+        </linearGradient>
+        <linearGradient id="grad_green" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#27ae60"/>
+            <stop offset="1" stop-color="#2ecc71"/>
+        </linearGradient>
+    </defs>
+    <!-- Blue Wallet Base -->
+    <rect x="7.5" y="30" width="65" height="45" rx="10" fill="url(#grad_wallet)"/>
+    <!-- Green Investment Bars -->
+    <g>
+        <rect x="20" y="55" width="6" height="10" rx="3" fill="url(#grad_green)"/>
+        <rect x="30" y="45" width="6" height="20" rx="3" fill="url(#grad_green)"/>
+        <rect x="40" y="35" width="6" height="30" rx="3" fill="url(#grad_green)"/>
+        <rect x="50" y="25" width="6" height="40" rx="3" fill="url(#grad_green)"/>
+    </g>
+    <!-- Green Circle for the Arrow -->
+    <circle cx="60" cy="25" r="10" fill="url(#grad_green)"/>
+    <!-- White Arrow Path -->
+    <path d="M60 28 L60 22 L57 25 M60 22 L63 25" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Gold Dollar Signs -->
+    <text x="23" y="70" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#f1c40f">$</text>
+    <text x="33" y="70" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#f1c40f">$</text>
+</svg>

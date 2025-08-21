@@ -1,4 +1,4 @@
-// listener.js (Final Version with Connection Check)
+// listener.js (Final Definitive Version)
 console.log("✅ PocketWisely Listener.js --- FINAL --- is running.");
 
 // This is the most comprehensive list of selectors for all known button types.
@@ -20,13 +20,11 @@ document.body.addEventListener('click', function(event) {
         clickedButton.removeAttribute('data-pocketwisely-unlocked');
         
         let actionType = getActionType(clickedButton);
-        // --- MODIFICATION: Added a check for chrome.runtime ---
+        // This check is a safeguard against the script losing connection.
         if (chrome && chrome.runtime && chrome.runtime.sendMessage) {
             chrome.runtime.sendMessage({ action: "actualPurchaseAction", buttonType: actionType });
-        } else {
-            console.error("PocketWisely Critical Error: Cannot connect to background script on second click.");
         }
-        return; // Allow the default browser action to proceed
+        return; // IMPORTANT: Allow the default browser action to proceed
     }
 
     // This is the FIRST click, so we intercept it.
@@ -46,11 +44,10 @@ document.body.addEventListener('click', function(event) {
     
     if (productData) {
         console.log("✅ Data scraped successfully. Sending to background script.", productData);
-        // --- MODIFICATION: Added a check for chrome.runtime ---
         if (chrome && chrome.runtime && chrome.runtime.sendMessage) {
             chrome.runtime.sendMessage({ action: "purchaseAttempt", data: productData, buttonType: actionType });
         } else {
-            console.error("PocketWisely Critical Error: Cannot connect to background script. Please reload the extension and the page.");
+            console.error("❌ PocketWisely Critical Error: Cannot connect to background script. Please reload the extension and the page.");
             alert("PocketWisely Error: Connection to the extension was lost. Please reload the page.");
             clickedButton.removeAttribute('data-pocketwisely-target');
         }
@@ -62,8 +59,6 @@ document.body.addEventListener('click', function(event) {
 
 /**
  * Determines if the clicked button was for 'add_to_cart' or 'buy_now'.
- * @param {HTMLElement} button The button element that was clicked.
- * @returns {'add_to_cart' | 'buy_now'}
  */
 function getActionType(button) {
     if ((button.id && button.id.toLowerCase().includes('buy-now')) || (button.name && button.name.toLowerCase().includes('buy-now'))) {
@@ -74,8 +69,6 @@ function getActionType(button) {
 
 /**
  * The main scraping function. It acts as a router to decide which scraping strategy to use.
- * @param {HTMLElement} button The button element that was clicked.
- * @returns {object|null} The scraped product data or null if not found.
  */
 function scrapeDataForClickedButton(button) {
     const comparisonTable = button.closest('table[class*="desktopFaceoutStyle_comparisonTable"]');
@@ -86,33 +79,27 @@ function scrapeDataForClickedButton(button) {
 
     if (productContainer) {
         let nameEl, priceEl, imageEl;
-        // Waterfall of selectors to find the name
         nameEl = productContainer.querySelector('div[class*="sponsored-products-truncator"]');
         if (!nameEl) nameEl = productContainer.querySelector('h2.a-text-normal > span');
         if (!nameEl) nameEl = productContainer.querySelector('.p13n-sc-truncate-desktop-type2');
         if (!nameEl) nameEl = productContainer.querySelector('a.a-link-normal[title]');
-        
         priceEl = productContainer.querySelector('.a-price .a-offscreen');
         imageEl = productContainer.querySelector('img.s-image, img');
-
         if (nameEl && priceEl) {
             const name = nameEl.textContent.trim() || (nameEl.title ? nameEl.title.trim() : '');
             if (name) return { name, price: priceEl.innerText.trim(), image: imageEl ? imageEl.src : '' };
         }
     } else {
-        // Fallback for the main product page
         const nameEl = document.querySelector('#productTitle');
         const priceEl = document.querySelector('#corePrice_feature_div .a-offscreen, .a-price.a-text-price .a-offscreen, #price');
         const imageEl = document.querySelector('#landingImage');
         if (nameEl && priceEl) return { name: nameEl.textContent.trim(), price: priceEl.innerText.trim(), image: imageEl ? imageEl.src : '' };
     }
-    return null; // Return null if no data could be found
+    return null;
 }
 
 /**
  * A specialized function to scrape data from a "Compare with similar items" table.
- * @param {HTMLElement} button The button element that was clicked.
- * @returns {object|null} The scraped product data.
  */
 function scrapeComparisonTable(button) {
     const table = button.closest('table[class*="comparisonTable"]');
