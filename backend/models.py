@@ -12,7 +12,10 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     events = db.relationship('PurchaseEvent', backref='user', lazy=True, cascade="all, delete-orphan")
-
+    risk_tolerance = db.Column(db.String(50), nullable=True)
+    investment_duration = db.Column(db.String(50), nullable=True)
+    financial_status = db.Column(db.String(50), nullable=True)
+    
 class PurchaseEvent(db.Model):
     _tablename_ = 'purchase_event'
     id = db.Column(db.Integer, primary_key=True)

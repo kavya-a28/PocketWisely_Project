@@ -1,10 +1,10 @@
 # backend/app.py
 
-from flask import Flask, request, jsonify
-from flask_migrate import Migrate
-from flask_cors import CORS
+from flask import Flask, request, jsonify # type: ignore
+from flask_migrate import Migrate # type: ignore
+from flask_cors import CORS # type: ignore
 from models import db, User, PurchaseEvent
-from sqlalchemy import desc
+from sqlalchemy import desc # type: ignore
 # Make sure you have your ml_logic.py file in the same folder
 from ml_logic import get_prediction_and_advice
 
@@ -86,6 +86,35 @@ def create_app():
 
         db.session.commit()
         return jsonify({"message": f"Decision '{decision}' recorded"})
+
+    @app.route('/api/user/profile', methods=['GET', 'POST'])
+    def user_profile():
+        data = request.get_json()
+        user_id = data.get('userId')
+        if not user_id:
+            return jsonify({"error": "User ID is required"}), 400
+        
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        if request.method == 'GET':
+            # Return the user's current investment profile
+            return jsonify({
+                "risk_tolerance": user.risk_tolerance,
+                "investment_duration": user.investment_duration,
+                "financial_status": user.financial_status
+            })
+
+        if request.method == 'POST':
+            # Update the user's investment profile with new answers
+            answers = data.get('answers', {})
+            user.risk_tolerance = answers.get('risk_level')
+            user.investment_duration = answers.get('duration')
+            user.financial_status = answers.get('financial_stability')
+            db.session.commit()
+            return jsonify({"message": "User profile updated successfully"})
+
 
     @app.route('/api/analyze-and-advise', methods=['POST'])
     def analyze_and_advise():
