@@ -1,5 +1,7 @@
 # backend/app.py
 
+
+
 from flask import Flask, request, jsonify # type: ignore
 from flask_migrate import Migrate # type: ignore
 from flask_cors import CORS # type: ignore
@@ -11,7 +13,7 @@ from ml_logic import get_prediction_and_advice
 def create_app():
     app = Flask(__name__)
     # ✅ FIXED: Corrected CORS policy to allow requests from any origin to any /api/ endpoint.
-    CORS(app, resources={r"/api/*": {"origins": "*"}}) 
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     DB_USER = "root"
     DB_PASSWORD = "pass123"
@@ -87,10 +89,20 @@ def create_app():
         db.session.commit()
         return jsonify({"message": f"Decision '{decision}' recorded"})
 
+    # ✅ MODIFIED: This endpoint now correctly handles GET and POST requests.
     @app.route('/api/user/profile', methods=['GET', 'POST'])
     def user_profile():
-        data = request.get_json()
-        user_id = data.get('userId')
+        user_id = None
+        # For GET, we expect userId as a URL query parameter (e.g., ?userId=...)
+        if request.method == 'GET':
+            user_id = request.args.get('userId')
+        # For POST, we expect it in the JSON body
+        elif request.method == 'POST':
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "Invalid JSON body"}), 400
+            user_id = data.get('userId')
+
         if not user_id:
             return jsonify({"error": "User ID is required"}), 400
         
@@ -107,14 +119,18 @@ def create_app():
             })
 
         if request.method == 'POST':
-            # Update the user's investment profile with new answers
+            # Update the user's investment profile with new answers from the survey
+            data = request.get_json()
+            if not data:
+                 return jsonify({"error": "Invalid JSON body"}), 400
             answers = data.get('answers', {})
+            
             user.risk_tolerance = answers.get('risk_level')
             user.investment_duration = answers.get('duration')
             user.financial_status = answers.get('financial_stability')
+            
             db.session.commit()
             return jsonify({"message": "User profile updated successfully"})
-
 
     @app.route('/api/analyze-and-advise', methods=['POST'])
     def analyze_and_advise():
