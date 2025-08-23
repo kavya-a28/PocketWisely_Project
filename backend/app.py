@@ -1,7 +1,5 @@
 # backend/app.py
 
-
-
 from flask import Flask, request, jsonify # type: ignore
 from flask_migrate import Migrate # type: ignore
 from flask_cors import CORS # type: ignore
@@ -9,6 +7,8 @@ from models import db, User, PurchaseEvent
 from sqlalchemy import desc # type: ignore
 # Make sure you have your ml_logic.py file in the same folder
 from ml_logic import get_prediction_and_advice
+# --- NEW IMPORT ---
+from recommendation_logic import get_recommendations
 
 def create_app():
     app = Flask(__name__)
@@ -125,12 +125,56 @@ def create_app():
                  return jsonify({"error": "Invalid JSON body"}), 400
             answers = data.get('answers', {})
             
+            # --- MODIFICATION: Handle 'comfort' value from frontend ---
+            financial_stability = answers.get('financial_stability')
+            if financial_stability == 'comfort':
+                financial_stability = 'comfortable' # Match backend logic
+
             user.risk_tolerance = answers.get('risk_level')
             user.investment_duration = answers.get('duration')
-            user.financial_status = answers.get('financial_stability')
+            user.financial_status = financial_stability
             
             db.session.commit()
             return jsonify({"message": "User profile updated successfully"})
+
+    # --- NEW ENDPOINT ---
+    @app.route('/api/get-recommendation', methods=['POST'])
+    def get_investment_recommendation():
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Invalid JSON body"}), 400
+
+        event_id = data.get('eventId')
+        answers = data.get('answers', {})
+
+        risk = answers.get('risk_level')
+        duration = answers.get('duration')
+        # Handle 'comfort' value from frontend
+        financial_status = answers.get('financial_stability')
+        if financial_status == 'comfort':
+            financial_status = 'comfortable'
+
+        if not all([event_id, risk, duration, financial_status]):
+            return jsonify({"error": "Missing eventId or profile answers"}), 400
+        
+        event = PurchaseEvent.query.get(event_id)
+        if not event:
+            return jsonify({"error": "Purchase event not found"}), 404
+        
+        investment_amount = event.price
+
+        recommendation = get_recommendations(
+            risk_tolerance=risk,
+            investment_horizon=duration,
+            financial_status=financial_status,
+            investment_amount=investment_amount
+        )
+
+        if not recommendation:
+            return jsonify({"error": "Could not generate a recommendation for the given profile."}), 404
+            
+        return jsonify(recommendation)
+
 
     @app.route('/api/analyze-and-advise', methods=['POST'])
     def analyze_and_advise():
