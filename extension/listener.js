@@ -91,7 +91,7 @@ function scrapeDataForClickedButton(button) {
         }
     } else {
         const nameEl = document.querySelector('#productTitle');
-        const priceEl = document.querySelector('#corePrice_feature_div .a-offscreen, .a-price.a-text-price .a-offscreen, #price');
+       const priceEl = document.querySelector('.reinventPricePriceToPayMargin .a-price-whole, #corePrice_feature_div .a-offscreen');
         const imageEl = document.querySelector('#landingImage');
         if (nameEl && priceEl) return { name: nameEl.textContent.trim(), price: priceEl.innerText.trim(), image: imageEl ? imageEl.src : '' };
     }

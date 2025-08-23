@@ -8,22 +8,22 @@ INVESTMENT_PRODUCTS = [
     {
         'name': 'Overnight Funds', 'risk_category': 'low', 'min_days': 1, 'max_days': 90, 'min_amount': 100,
         'returns_low': 3.5, 'returns_high': 4.5, 'liquidity': 'Very High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/overnight-funds'
+        'url': 'https://groww.in/mutual-funds/debt-funds/overnight-funds'
     },
     {
         'name': 'Liquid Funds', 'risk_category': 'low', 'min_days': 1, 'max_days': 365, 'min_amount': 100,
         'returns_low': 4.0, 'returns_high': 6.0, 'liquidity': 'Very High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/liquid-funds'
+        'url': 'https://groww.in/mutual-funds/debt-funds/liquid-funds'
     },
     {
         'name': 'Ultra Short Duration Funds', 'risk_category': 'low', 'min_days': 30, 'max_days': 365, 'min_amount': 1000,
         'returns_low': 4.5, 'returns_high': 6.5, 'liquidity': 'High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/ultra-short-duration-funds'
+        'url': 'https://groww.in/mutual-funds/debt-funds/ultra-short-term-funds'
     },
     {
         'name': 'Money Market Funds', 'risk_category': 'low', 'min_days': 7, 'max_days': 365, 'min_amount': 100,
         'returns_low': 3.8, 'returns_high': 5.5, 'liquidity': 'Very High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/money-market-funds'
+        'url': 'https://groww.in/mutual-funds/debt-funds/money-market-funds'
     },
 
     # Short Term (3 months to 2 years) - Low to Medium Risk
@@ -35,29 +35,29 @@ INVESTMENT_PRODUCTS = [
     {
         'name': 'Short Duration Funds', 'risk_category': 'low', 'min_days': 180, 'max_days': 1095, 'min_amount': 500,
         'returns_low': 5.5, 'returns_high': 7.5, 'liquidity': 'High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/short-duration-funds'
+        'url': 'https://groww.in/mutual-funds/debt-funds/low-duration-funds'
     },
     {
         'name': 'Corporate Bond Funds', 'risk_category': 'low', 'min_days': 365, 'max_days': 1825, 'min_amount': 1000,
         'returns_low': 7.0, 'returns_high': 9.0, 'liquidity': 'Medium', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/corporate-bond-funds'
+        'url': 'https://groww.in/mutual-funds/debt-funds/corporate-bond-funds'
     },
     {
         'name': 'Conservative Hybrid Funds', 'risk_category': 'medium', 'min_days': 180, 'max_days': 1095, 'min_amount': 1000,
         'returns_low': 7.5, 'returns_high': 9.5, 'liquidity': 'Medium', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/conservative-hybrid-funds'
+        'url': 'https://groww.in/mutual-funds/hybrid-funds/conservative-funds'
     },
     {
         'name': 'Arbitrage Funds', 'risk_category': 'low', 'min_days': 90, 'max_days': 730, 'min_amount': 500,
         'returns_low': 6.0, 'returns_high': 7.5, 'liquidity': 'High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/arbitrage-funds'
+        'url': 'https://groww.in/mutual-funds/hybrid-funds/arbitrage-funds'
     },
 
     # Medium Term (2-5 years) - Low to High Risk
     {
         'name': 'Medium Duration Funds', 'risk_category': 'low', 'min_days': 730, 'max_days': 1825, 'min_amount': 1000,
         'returns_low': 6.5, 'returns_high': 8.5, 'liquidity': 'Medium', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/medium-duration-funds'
+        'url': 'https://groww.in/mutual-funds/debt-funds/medium-duration-funds'
     },
     {
         'name': 'NSC (National Savings Certificate)', 'risk_category': 'low', 'min_days': 1825, 'max_days': 1825, 'min_amount': 1000,
@@ -67,7 +67,7 @@ INVESTMENT_PRODUCTS = [
     {
         'name': 'Index Funds', 'risk_category': 'medium', 'min_days': 365, 'max_days': 3650, 'min_amount': 100,
         'returns_low': 10.0, 'returns_high': 12.0, 'liquidity': 'High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/index-funds'
+        'url': 'https://groww.in/mutual-funds/other-schemes/index-funds'
     },
     {
         'name': 'Balanced Hybrid Funds', 'risk_category': 'medium', 'min_days': 730, 'max_days': 2190, 'min_amount': 1000,
@@ -82,12 +82,12 @@ INVESTMENT_PRODUCTS = [
     {
         'name': 'Large Cap Funds', 'risk_category': 'medium', 'min_days': 730, 'max_days': 3650, 'min_amount': 500,
         'returns_low': 10.0, 'returns_high': 13.0, 'liquidity': 'High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/large-cap-funds'
+        'url': 'https://groww.in/mutual-funds/equity-funds/large-cap-funds'
     },
     {
         'name': 'Blue Chip Stocks (Diversified)', 'risk_category': 'high', 'min_days': 730, 'max_days': 2190, 'min_amount': 500,
         'returns_low': 12.0, 'returns_high': 18.0, 'liquidity': 'Very High', 'lock_in': 'None',
-        'url': 'https://groww.in/stocks/collection/top-100-stocks'
+        'url': 'https://groww.in/indices/nifty-218500'
     },
 
     # Long Term (5+ years) - All Risk Categories
@@ -99,71 +99,71 @@ INVESTMENT_PRODUCTS = [
     {
         'name': 'ELSS Funds (Tax Saving)', 'risk_category': 'medium', 'min_days': 1095, 'max_days': 3650, 'min_amount': 500,
         'returns_low': 12.0, 'returns_high': 15.0, 'liquidity': 'Low', 'lock_in': '3 years',
-        'url': 'https://groww.in/mutual-funds/elss-funds'
+        'url': 'https://groww.in/mutual-funds/equity-funds/elss-funds'
     },
     {
         'name': 'Flexi Cap Funds', 'risk_category': 'medium', 'min_days': 1825, 'max_days': 3650, 'min_amount': 500,
         'returns_low': 11.0, 'returns_high': 14.0, 'liquidity': 'High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/flexi-cap-funds'
+        'url': 'https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth'
     },
     {
         'name': 'Multi Cap Funds', 'risk_category': 'medium', 'min_days': 1825, 'max_days': 3650, 'min_amount': 500,
         'returns_low': 11.5, 'returns_high': 14.5, 'liquidity': 'High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/multi-cap-funds'
+        'url': 'https://groww.in/mutual-funds/equity-funds/multi-cap-funds'
     },
     {
         'name': 'Mid Cap Funds', 'risk_category': 'high', 'min_days': 1825, 'max_days': 3650, 'min_amount': 500,
         'returns_low': 14.0, 'returns_high': 18.0, 'liquidity': 'High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/mid-cap-funds'
+        'url': 'https://groww.in/mutual-funds/equity-funds/mid-cap-funds'
     },
     {
         'name': 'Small Cap Funds', 'risk_category': 'high', 'min_days': 2190, 'max_days': 3650, 'min_amount': 500,
         'returns_low': 16.0, 'returns_high': 22.0, 'liquidity': 'High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/small-cap-funds'
+        'url': 'https://groww.in/mutual-funds/equity-funds/small-cap-funds'
     },
     {
         'name': 'Sector Funds (Technology)', 'risk_category': 'high', 'min_days': 1825, 'max_days': 3650, 'min_amount': 1000,
         'returns_low': 15.0, 'returns_high': 25.0, 'liquidity': 'High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/sector-funds'
+        'url': 'https://groww.in/mutual-funds/equity-funds/sectoral-funds'
     },
     {
         'name': 'Thematic Funds (ESG/Infrastructure)', 'risk_category': 'high', 'min_days': 2190, 'max_days': 3650, 'min_amount': 1000,
         'returns_low': 13.0, 'returns_high': 20.0, 'liquidity': 'High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/thematic-funds'
+        'url': 'https://www.etmoney.com/mutual-funds/icici-prudential-manufacturing-fund-direct-growth/38298'
     },
     {
         'name': 'International Funds (US/Global)', 'risk_category': 'high', 'min_days': 1825, 'max_days': 3650, 'min_amount': 1000,
         'returns_low': 12.0, 'returns_high': 16.0, 'liquidity': 'High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/international-funds'
+        'url': 'https://www.5paisa.com/mutual-funds/edelweiss-us-technology-equity-fund-of-fund-dirgrowth'
     },
 
     # Alternative Investments (Medium to High Risk)
     {
         'name': 'REITs (Real Estate Investment Trusts)', 'risk_category': 'medium', 'min_days': 1095, 'max_days': 3650, 'min_amount': 2000,
         'returns_low': 8.0, 'returns_high': 12.0, 'liquidity': 'Medium', 'lock_in': 'None',
-        'url': 'https://groww.in/stocks/reits'
+        'url': 'https://www.reit.com/'
     },
     {
         'name': 'InvITs (Infrastructure Investment Trusts)', 'risk_category': 'medium', 'min_days': 1825, 'max_days': 3650, 'min_amount': 10000,
         'returns_low': 7.5, 'returns_high': 11.0, 'liquidity': 'Medium', 'lock_in': 'None',
-        'url': 'https://groww.in/stocks/invits'
+        'url': 'https://nhit.co.in/'
     },
     {
         'name': 'Commodity Funds (Silver/Gold)', 'risk_category': 'medium', 'min_days': 365, 'max_days': 2190, 'min_amount': 1000,
         'returns_low': 6.0, 'returns_high': 15.0, 'liquidity': 'High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/commodity-funds'
+        'url': 'https://www.moneycontrol.com/mutual-funds/nav/sbi-gold-fund-direct-plan/MSB522#google_vignette'
     },
 
     # High-Risk, High-Reward Options
     {
         'name': 'Crypto Funds (Regulated)', 'risk_category': 'high', 'min_days': 365, 'max_days': 2190, 'min_amount': 100,
         'returns_low': -20.0, 'returns_high': 50.0, 'liquidity': 'High', 'lock_in': 'None',
-        'url': 'https://groww.in/mutual-funds/overseas-funds'
+        'url': 'https://www.21shares.com/en-row'
     },
     {
         'name': 'Individual Stocks (Growth)', 'risk_category': 'high', 'min_days': 365, 'max_days': 3650, 'min_amount': 100,
         'returns_low': 10.0, 'returns_high': 30.0, 'liquidity': 'Very High', 'lock_in': 'None',
-        'url': 'https://groww.in/stocks/collection/growth-stocks'
+        'url': 'https://groww.in/stocks/filter'
     },
     {
         'name': 'IPO Investments', 'risk_category': 'high', 'min_days': 180, 'max_days': 1095, 'min_amount': 14000,

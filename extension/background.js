@@ -772,483 +772,1874 @@ function showAdvancedRecommendationPopup(recData, eventId) {
         <div id="pocketwisely-prompt-overlay">
             <div id="pocketwisely-prompt">
                 <div class="pw-rec-modal">
-                    <div class="pw-rec-header">
-                        <h2 class="pw-rec-title">Your Top Investment Match</h2>
-                        <p class="pw-rec-subtitle">Based on your profile, here's our top suggestion for your <strong>${formatCurrency(recData.investment_amount)}</strong>.</p>
+                    <!-- Floating Particles Background -->
+                    <div class="pw-particles-container">
+                        <div class="pw-particle"></div>
+                        <div class="pw-particle"></div>
+                        <div class="pw-particle"></div>
+                        <div class="pw-particle"></div>
+                        <div class="pw-particle"></div>
+                        <div class="pw-particle"></div>
+                        <div class="pw-particle"></div>
+                        <div class="pw-particle"></div>
                     </div>
-                    <div class="pw-rec-body">
-                        <div class="pw-rec-product-card">
-                            <h3>${recData.product_name}</h3>
-                            <div class="pw-rec-tags">
-                                <span class="pw-rec-tag risk-${recData.risk_level.toLowerCase()}">${recData.risk_level} Risk</span>
-                                <span class="pw-rec-tag">${recData.liquidity} Liquidity</span>
+
+                    <!-- Header with Animated Icon -->
+                    <div class="pw-rec-header">
+                        <div class="pw-header-animation">
+                            <div class="pw-investment-icon">
+                                <div class="pw-piggy-bank">🐷</div>
+                                <!-- Falling coins animation -->
+                                <div class="pw-falling-coins">
+                                    <div class="pw-falling-coin">🪙</div>
+                                    <div class="pw-falling-coin">🪙</div>
+                                    <div class="pw-falling-coin">🪙</div>
+                                    <div class="pw-falling-coin">🪙</div>
+                                    <div class="pw-falling-coin">🪙</div>
+                                    <div class="pw-falling-coin">🪙</div>
+                                </div>
+                                <!-- Money bags floating -->
+                                <div class="pw-money-bags">
+                                    <div class="pw-money-bag">💰</div>
+                                    <div class="pw-money-bag">💰</div>
+                                    <div class="pw-money-bag">💰</div>
+                                </div>
+                                <!-- Sparkles around piggy bank -->
+                                <div class="pw-sparkles">
+                                    <div class="pw-sparkle">✨</div>
+                                    <div class="pw-sparkle">✨</div>
+                                    <div class="pw-sparkle">✨</div>
+                                    <div class="pw-sparkle">✨</div>
+                                    <div class="pw-sparkle">✨</div>
+                                </div>
                             </div>
-                            <div class="pw-rec-returns">
-                                <small>Expected Annual Returns</small>
-                                <strong>${recData.expected_return.low}% - ${recData.expected_return.high}%</strong>
+                        </div>
+                        <h2 class="pw-rec-title">
+                            <span class="pw-title-word pw-word-1">Your</span>
+                            <span class="pw-title-word pw-word-2">Top</span>
+                            <span class="pw-title-word pw-word-3">Investment</span>
+                            <span class="pw-title-word pw-word-4">Match</span>
+                        </h2>
+                        <div class="pw-wealth-progress-container">
+                            <div class="pw-wealth-label">
+                                <span class="pw-wealth-icon">📈</span>
+                                Future Wealth Building
+                            </div>
+                            <div class="pw-wealth-progress-bar">
+                                <div class="pw-wealth-fill"></div>
+                                <div class="pw-wealth-percentage">0%</div>
+                                <div class="pw-progress-sparkle">✨</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pw-rec-body">
+                        <!-- AI Recommendation Badge -->
+                        <div class="pw-ai-badge">
+                            <div class="pw-ai-icon">🤖</div>
+                            <span>AI Personalized Match</span>
+                            <div class="pw-ai-pulse"></div>
+                            <div class="pw-ai-scan-line"></div>
+                        </div>
+
+                        <!-- Product Card with Holographic Effect -->
+                        <div class="pw-rec-product-card">
+                            <div class="pw-holographic-overlay"></div>
+                            <div class="pw-neon-border"></div>
+                            <div class="pw-product-content">
+                                <h3 class="pw-product-name">${recData.product_name}</h3>
+                                <div class="pw-rec-tags">
+                                    <span class="pw-rec-tag risk-${recData.risk_level.toLowerCase()}">
+                                        <span class="pw-tag-icon">🛡</span>
+                                        ${recData.risk_level} Risk
+                                        <div class="pw-tag-shine"></div>
+                                    </span>
+                                    <span class="pw-rec-tag">
+                                        <span class="pw-tag-icon">💧</span>
+                                        ${recData.liquidity} Liquidity
+                                        <div class="pw-tag-shine"></div>
+                                    </span>
+                                </div>
+                                <div class="pw-rec-returns">
+                                    <div class="pw-returns-animated">
+                                        <small>Expected Annual Returns</small>
+                                        <div class="pw-returns-value">
+                                            <span class="pw-return-low">${recData.expected_return.low}%</span>
+                                            <span class="pw-return-separator">-</span>
+                                            <span class="pw-return-high">${recData.expected_return.high}%</span>
+                                        </div>
+                                        <div class="pw-returns-sparkle">✨</div>
+                                        <div class="pw-returns-glow"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
+                        <!-- Interactive Calculator with Real-time Animation -->
                         <div class="pw-rec-calculator">
+                            <div class="pw-calc-glow"></div>
+                            <div class="pw-calculator-grid"></div>
                             <div class="pw-rec-calc-header">
-                                <h4>Potential Growth in <span id="pw-time-val">${recData.time_horizon_display || recData.time_horizon_years + ' years'}</span></h4>
-                                <h2 id="pw-future-val-display">${formatCurrency(recData.future_values.low)} - ${formatCurrency(recData.future_values.high)}</h2>
+                                <h4>
+                                    <span class="pw-calc-icon">🚀</span>
+                                    Potential Growth Simulator
+                                    <span class="pw-calc-pulse"></span>
+                                </h4>
+                                <div class="pw-future-value-display">
+                                    <div class="pw-value-container">
+                                        <div class="pw-currency-symbol">₹</div>
+                                        <div class="pw-animated-value" id="pw-future-val-display">${formatCurrency(recData.future_values.low)} - ${formatCurrency(recData.future_values.high)}</div>
+                                        <div class="pw-value-particles">
+                                            <div class="pw-value-particle"></div>
+                                            <div class="pw-value-particle"></div>
+                                            <div class="pw-value-particle"></div>
+                                        </div>
+                                    </div>
+                                    <div class="pw-time-display" id="pw-time-val">${recData.time_horizon_display || recData.time_horizon_years + ' years'}</div>
+                                </div>
                             </div>
                             <div class="pw-rec-calc-slider">
-                                <label for="pw-time-slider">Adjust Time Horizon (30 days to 10 years)</label>
-                                <input type="range" min="0" max="120" value="${recData.time_horizon_months || recData.time_horizon_years * 12}" id="pw-time-slider">
+                                <label for="pw-time-slider">
+                                    <span class="pw-slider-icon">⏰</span>
+                                    Adjust Time Horizon
+                                </label>
+                                <div class="pw-slider-container">
+                                    <input type="range" min="0" max="120" value="${recData.time_horizon_months || recData.time_horizon_years * 12}" id="pw-time-slider">
+                                    <div class="pw-slider-glow"></div>
+                                </div>
+                                <div class="pw-slider-labels">
+                                    <span>30 days</span>
+                                    <span>10 years</span>
+                                </div>
                             </div>
                         </div>
 
+                        <!-- Benefits with Staggered Animation -->
                         <div class="pw-rec-benefits">
-                            <h4>Why This Investment?</h4>
-                            <div class="pw-benefit-item">
-                                <span class="pw-benefit-icon">✓</span>
-                                <div>
-                                    <strong>Matches Your Risk Profile</strong>
-                                    <p>Carefully selected based on your ${recData.risk_level.toLowerCase()} risk tolerance preferences.</p>
+                            <h4>
+                                <span class="pw-benefits-icon">💎</span>
+                                Why This Investment?
+                            </h4>
+                            <div class="pw-benefit-item pw-benefit-1">
+                                <div class="pw-benefit-icon-container">
+                                    <span class="pw-benefit-icon">🎯</span>
+                                    <div class="pw-icon-ripple"></div>
+                                    <div class="pw-icon-glow"></div>
                                 </div>
+                                <div class="pw-benefit-content">
+                                    <strong>Perfect Risk Match</strong>
+                                    <p>Carefully selected based on your ${recData.risk_level.toLowerCase()} risk tolerance.</p>
+                                </div>
+                                <div class="pw-benefit-shine"></div>
                             </div>
-                            <div class="pw-benefit-item">
-                                <span class="pw-benefit-icon">✓</span>
-                                <div>
-                                    <strong>Optimal Time Horizon</strong>
+                            <div class="pw-benefit-item pw-benefit-2">
+                                <div class="pw-benefit-icon-container">
+                                    <span class="pw-benefit-icon">⏰</span>
+                                    <div class="pw-icon-ripple"></div>
+                                    <div class="pw-icon-glow"></div>
+                                </div>
+                                <div class="pw-benefit-content">
+                                    <strong>Optimal Timeline</strong>
                                     <p>Perfect for your ${recData.time_horizon_display || recData.time_horizon_years + '-year'} investment timeline.</p>
                                 </div>
+                                <div class="pw-benefit-shine"></div>
                             </div>
-                            <div class="pw-benefit-item">
-                                <span class="pw-benefit-icon">✓</span>
-                                <div>
-                                    <strong>Professional Management</strong>
-                                    <p>Managed by experienced fund managers with proven track records.</p>
+                            <div class="pw-benefit-item pw-benefit-3">
+                                <div class="pw-benefit-icon-container">
+                                    <span class="pw-benefit-icon">👨‍💼</span>
+                                    <div class="pw-icon-ripple"></div>
+                                    <div class="pw-icon-glow"></div>
                                 </div>
+                                <div class="pw-benefit-content">
+                                    <strong>Expert Management</strong>
+                                    <p>Managed by experienced professionals with proven track records.</p>
+                                </div>
+                                <div class="pw-benefit-shine"></div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Futuristic Action Buttons -->
                     <div class="pw-rec-actions">
-                        <button id="pw-change-prefs-btn">Change Preferences</button>
-                        <button id="pw-invest-now-btn">Invest Now</button>
+                        <button id="pw-change-prefs-btn" class="pw-btn-secondary">
+                            <span class="pw-btn-icon">⚙</span>
+                            <span class="pw-btn-text">Change Preferences</span>
+                            <div class="pw-btn-ripple"></div>
+                            <div class="pw-btn-glow"></div>
+                        </button>
+                        <button id="pw-invest-now-btn" class="pw-btn-primary">
+                            <span class="pw-btn-icon">🚀</span>
+                            <span class="pw-btn-text">Invest Now</span>
+                            <div class="pw-btn-ripple"></div>
+                            <div class="pw-btn-particles">
+                                <div class="pw-btn-particle"></div>
+                                <div class="pw-btn-particle"></div>
+                                <div class="pw-btn-particle"></div>
+                                <div class="pw-btn-particle"></div>
+                                <div class="pw-btn-particle"></div>
+                            </div>
+                            <div class="pw-btn-energy-field"></div>
+                        </button>
                     </div>
+
+                    <!-- Tech Grid Overlay -->
+                    <div class="pw-tech-grid"></div>
                 </div>
             </div>
         </div>
+
         <style>
-            /* Overlay and main container */
+            /* Base Overlay with Matrix Effect */
             #pocketwisely-prompt-overlay {
                 position: fixed;
                 top: 0;
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background-color: rgba(10, 20, 30, 0.5);
-                backdrop-filter: blur(5px);
+                background: 
+                    radial-gradient(ellipse at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                    radial-gradient(ellipse at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+                    radial-gradient(ellipse at 40% 40%, rgba(20, 184, 166, 0.15) 0%, transparent 50%),
+                    linear-gradient(135deg, rgba(10, 20, 30, 0.85) 0%, rgba(15, 25, 40, 0.9) 100%);
+                backdrop-filter: blur(12px) saturate(180%);
                 z-index: 2147483647;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 20px 15px;
-                animation: overlayFadeIn 0.3s ease-out;
+                padding: 10px 8px;
+                animation: overlayMagicFadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             }
 
             #pocketwisely-prompt {
                 background: transparent;
                 width: 100%;
                 max-width: 480px;
-                max-height: calc(100vh - 40px);
-                text-align: center;
-                border: 0;
-                animation: promptSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-                display: flex;
-                flex-direction: column;
+                max-height: calc(100vh - 20px);
+                animation: modalMagicEntry 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                position: relative;
+                filter: drop-shadow(0 25px 50px rgba(20, 184, 166, 0.3));
             }
 
-            /* Main modal container - KEY CHANGE: Added flex structure */
+            /* Main Modal with Holographic Glass Effect */
             .pw-rec-modal {
-                background: #f8fafc;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                border-radius: 20px;
-                text-align: left;
-                width: 100%;
-                box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
+                background: 
+                    linear-gradient(135deg, 
+                        rgba(255, 255, 255, 0.95) 0%, 
+                        rgba(248, 250, 252, 0.9) 25%,
+                        rgba(240, 249, 255, 0.92) 50%, 
+                        rgba(248, 250, 252, 0.9) 75%,
+                        rgba(255, 255, 255, 0.95) 100%);
+                backdrop-filter: blur(25px) saturate(200%);
+                border: 2px solid;
+                border-image: linear-gradient(135deg, 
+                    rgba(20, 184, 166, 0.4) 0%,
+                    rgba(59, 130, 246, 0.4) 25%,
+                    rgba(139, 92, 246, 0.4) 50%,
+                    rgba(236, 72, 153, 0.4) 75%,
+                    rgba(20, 184, 166, 0.4) 100%) 1;
+                border-radius: 24px;
+                box-shadow: 
+                    0 0 80px rgba(20, 184, 166, 0.4),
+                    0 0 40px rgba(59, 130, 246, 0.3),
+                    0 25px 50px -12px rgba(0, 0, 0, 0.4),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+                overflow: hidden;
+                position: relative;
                 display: flex;
                 flex-direction: column;
                 max-height: 100%;
-                overflow: hidden;
             }
 
-            /* Header - fixed at top */
+            /* Tech Grid Background */
+            .pw-tech-grid {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: 
+                    linear-gradient(rgba(20, 184, 166, 0.1) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(20, 184, 166, 0.1) 1px, transparent 1px);
+                background-size: 20px 20px;
+                animation: gridMove 20s linear infinite;
+                pointer-events: none;
+                opacity: 0.3;
+            }
+
+            /* Floating Particles Background */
+            .pw-particles-container {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                pointer-events: none;
+            }
+
+            .pw-particle {
+                position: absolute;
+                width: 6px;
+                height: 6px;
+                background: linear-gradient(45deg, #14b8a6, #06b6d4, #8b5cf6);
+                border-radius: 50%;
+                animation: floatingParticles 25s infinite linear;
+                box-shadow: 0 0 10px rgba(20, 184, 166, 0.8);
+            }
+
+            .pw-particle:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 20s; }
+            .pw-particle:nth-child(2) { left: 20%; animation-delay: 3s; animation-duration: 22s; }
+            .pw-particle:nth-child(3) { left: 30%; animation-delay: 6s; animation-duration: 18s; }
+            .pw-particle:nth-child(4) { left: 50%; animation-delay: 9s; animation-duration: 24s; }
+            .pw-particle:nth-child(5) { left: 70%; animation-delay: 12s; animation-duration: 16s; }
+            .pw-particle:nth-child(6) { left: 80%; animation-delay: 15s; animation-duration: 26s; }
+            .pw-particle:nth-child(7) { left: 40%; animation-delay: 18s; animation-duration: 21s; }
+            .pw-particle:nth-child(8) { left: 60%; animation-delay: 21s; animation-duration: 19s; }
+
+            /* Header with Enhanced Coin Animation - COMPACT */
             .pw-rec-header {
-                padding: 24px 28px;
+                padding: 20px 24px 16px;
                 text-align: center;
-                background: #fff;
-                border-bottom: 1px solid #eaf0f6;
+                position: relative;
+                background: 
+                    linear-gradient(135deg, 
+                        rgba(20, 184, 166, 0.08) 0%, 
+                        rgba(59, 130, 246, 0.05) 50%,
+                        transparent 100%);
+                border-bottom: 1px solid rgba(20, 184, 166, 0.1);
                 flex-shrink: 0;
             }
 
+            .pw-header-animation {
+                margin-bottom: 16px;
+                position: relative;
+                height: 70px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .pw-investment-icon {
+                position: relative;
+                z-index: 10;
+            }
+
+            .pw-piggy-bank {
+                font-size: 42px;
+                animation: piggyBounce 3s ease-in-out infinite;
+                filter: drop-shadow(0 12px 24px rgba(20, 184, 166, 0.4));
+                position: relative;
+                z-index: 5;
+            }
+
+            /* Enhanced Falling Coins */
+            .pw-falling-coins {
+                position: absolute;
+                top: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 200px;
+                height: 100px;
+                pointer-events: none;
+            }
+
+            .pw-falling-coin {
+                position: absolute;
+                font-size: 16px;
+                animation: coinFall 3s ease-in infinite;
+                filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.6));
+            }
+
+            .pw-falling-coin:nth-child(1) { left: 15%; animation-delay: 0.2s; }
+            .pw-falling-coin:nth-child(2) { left: 30%; animation-delay: 0.8s; }
+            .pw-falling-coin:nth-child(3) { left: 50%; animation-delay: 1.4s; }
+            .pw-falling-coin:nth-child(4) { left: 70%; animation-delay: 2s; }
+            .pw-falling-coin:nth-child(5) { left: 85%; animation-delay: 2.6s; }
+            .pw-falling-coin:nth-child(6) { left: 40%; animation-delay: 1.2s; }
+
+            /* Money Bags Floating */
+            .pw-money-bags {
+                position: absolute;
+                top: -15px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 160px;
+                height: 90px;
+                pointer-events: none;
+            }
+
+            .pw-money-bag {
+                position: absolute;
+                font-size: 18px;
+                animation: moneyBagFloat 4s ease-in-out infinite;
+                filter: drop-shadow(0 8px 16px rgba(34, 197, 94, 0.4));
+            }
+
+            .pw-money-bag:nth-child(1) { left: 20%; animation-delay: 0s; }
+            .pw-money-bag:nth-child(2) { left: 50%; animation-delay: 1.3s; }
+            .pw-money-bag:nth-child(3) { left: 80%; animation-delay: 2.6s; }
+
+            /* Sparkles around piggy bank */
+            .pw-sparkles {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 150px;
+                height: 150px;
+                pointer-events: none;
+            }
+
+            .pw-sparkle {
+                position: absolute;
+                font-size: 12px;
+                animation: sparkleOrbit 8s linear infinite;
+                filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+            }
+
+            .pw-sparkle:nth-child(1) { animation-delay: 0s; }
+            .pw-sparkle:nth-child(2) { animation-delay: 1.6s; }
+            .pw-sparkle:nth-child(3) { animation-delay: 3.2s; }
+            .pw-sparkle:nth-child(4) { animation-delay: 4.8s; }
+            .pw-sparkle:nth-child(5) { animation-delay: 6.4s; }
+
+            /* Animated Title - COMPACT */
             .pw-rec-title {
                 color: #1e293b;
-                font-size: 22px;
-                font-weight: 700;
-                margin: 0 0 6px;
+                font-size: 24px;
+                font-weight: 900;
+                margin: 12px 0;
+                letter-spacing: -0.6px;
+                perspective: 1000px;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
 
-            .pw-rec-subtitle {
+            .pw-title-word {
+                display: inline-block;
+                animation: titleWordReveal 1s ease-out forwards;
+                opacity: 0;
+                transform: translateY(30px) rotateX(90deg);
+                margin: 0 6px;
+            }
+
+            .pw-word-1 { animation-delay: 0.3s; }
+            .pw-word-2 { 
+                animation-delay: 0.6s; 
+                background: linear-gradient(135deg, #14b8a6, #06b6d4);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+            .pw-word-3 { animation-delay: 0.9s; }
+            .pw-word-4 { 
+                animation-delay: 1.2s; 
+                background: linear-gradient(135deg, #8b5cf6, #ec4899);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            /* Enhanced Wealth Progress Bar - COMPACT */
+            .pw-wealth-progress-container {
+                margin-top: 12px;
+                position: relative;
+            }
+
+            .pw-wealth-label {
+                font-size: 13px;
                 color: #64748b;
-                font-size: 14px;
-                margin: 0;
-                line-height: 1.5;
+                margin-bottom: 8px;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
             }
 
-            /* Body - scrollable content */
+            .pw-wealth-icon {
+                animation: iconBounce 2s ease-in-out infinite;
+                filter: drop-shadow(0 2px 4px rgba(34, 197, 94, 0.4));
+            }
+
+            .pw-wealth-progress-bar {
+                position: relative;
+                background: rgba(226, 232, 240, 0.8);
+                height: 8px;
+                border-radius: 25px;
+                overflow: hidden;
+                box-shadow: 
+                    inset 0 2px 8px rgba(0,0,0,0.1),
+                    0 1px 0 rgba(255,255,255,0.8);
+                border: 1px solid rgba(20, 184, 166, 0.2);
+            }
+
+            .pw-wealth-fill {
+                height: 100%;
+                background: linear-gradient(90deg, 
+                    #14b8a6 0%, 
+                    #06b6d4 25%, 
+                    #3b82f6 50%, 
+                    #8b5cf6 75%, 
+                    #ec4899 100%);
+                border-radius: 25px;
+                animation: wealthGrowth 4s ease-out forwards;
+                width: 0%;
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 0 20px rgba(20, 184, 166, 0.6);
+            }
+
+            .pw-wealth-fill::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 30px;
+                background: linear-gradient(90deg, 
+                    transparent 0%, 
+                    rgba(255,255,255,0.9) 50%, 
+                    transparent 100%);
+                animation: progressShimmer 2s infinite;
+            }
+
+            .pw-progress-sparkle {
+                position: absolute;
+                top: 50%;
+                right: 10%;
+                transform: translateY(-50%);
+                font-size: 10px;
+                animation: sparkle 1.5s ease-in-out infinite;
+                opacity: 0;
+                animation-delay: 3s;
+            }
+
+            .pw-wealth-percentage {
+                position: absolute;
+                top: -28px;
+                right: 0;
+                font-size: 12px;
+                font-weight: 800;
+                color: #14b8a6;
+                animation: percentageCount 4s ease-out forwards;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            }
+
+            /* Body Content with Enhanced Scrolling - COMPACT */
             .pw-rec-body {
-                padding: 24px 28px;
+                padding: 16px 20px;
                 overflow-y: auto;
                 flex: 1;
                 min-height: 0;
+                position: relative;
             }
 
-            /* Product card */
-            .pw-rec-product-card {
-                background: #fff;
-                border: 1px solid #eaf0f6;
-                padding: 20px;
+            /* Enhanced Scrollbar */
+            .pw-rec-body::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .pw-rec-body::-webkit-scrollbar-track {
+                background: linear-gradient(180deg, rgba(20, 184, 166, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+                border-radius: 10px;
+                box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+            }
+
+          
+
+            /* Enhanced AI Badge - COMPACT */
+            .pw-ai-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                background: linear-gradient(135deg, 
+                    rgba(139, 92, 246, 0.15) 0%, 
+                    rgba(59, 130, 246, 0.12) 50%,
+                    rgba(20, 184, 166, 0.15) 100%);
+                border: 2px solid rgba(139, 92, 246, 0.4);
+                padding: 8px 14px;
+                border-radius: 50px;
+                font-size: 11px;
+                font-weight: 700;
+                color: #7c3aed;
+                margin-bottom: 16px;
+                position: relative;
+                animation: aiBadgeGlow 3s ease-in-out infinite;
+                box-shadow: 
+                    0 8px 32px rgba(139, 92, 246, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            }
+
+            .pw-ai-icon {
+                animation: aiIconSpin 6s linear infinite;
+                font-size: 14px;
+                filter: drop-shadow(0 2px 4px rgba(139, 92, 246, 0.4));
+            }
+
+            .pw-ai-pulse {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 120%;
+                height: 120%;
+                border: 2px solid rgba(139, 92, 246, 0.6);
+                border-radius: 50px;
+                animation: aiPulse 2s ease-in-out infinite;
+            }
+
+            .pw-ai-scan-line {
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, 
+                    transparent 0%, 
+                    rgba(139, 92, 246, 0.4) 50%, 
+                    transparent 100%);
+                animation: aiScanLine 3s ease-in-out infinite;
+                border-radius: 50px;
+            }
+
+            /* Enhanced Product Card with Neon Effects - COMPACT */
+     .pw-rec-product-card {
+    position: relative;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95) 0%, 
+        rgba(248, 250, 252, 0.9) 100%);
+    border: 2px solid rgba(20, 184, 166, 0.3); /* Changed border color */
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    animation: cardFloat 4s ease-in-out infinite;
+    box-shadow: 
+        0 20px 40px rgba(20, 184, 166, 0.15), /* Changed shadow color */
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+            .pw-holographic-overlay {
+            display: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(45deg, 
+                    rgba(20, 184, 166, 0.05) 0%,
+                    rgba(59, 130, 246, 0.05) 25%,
+                    rgba(139, 92, 246, 0.05) 50%,
+                    rgba(236, 72, 153, 0.05) 75%,
+                    rgba(20, 184, 166, 0.05) 100%);
+                background-size: 400% 400%;
+                animation: holographicShift 8s ease-in-out infinite;
+                pointer-events: none;
                 border-radius: 16px;
-                margin-bottom: 20px;
-                box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.05);
             }
 
-            .pw-rec-product-card h3 {
-                margin: 0 0 12px;
-                font-size: 20px;
-                color: #1e293b;
+            .pw-neon-border {
+            display: none;
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                width: calc(100% + 4px);
+                height: calc(100% + 4px);
+                background: linear-gradient(45deg, 
+                    #14b8a6, #06b6d4, #8b5cf6, #ec4899, #14b8a6);
+                background-size: 300% 300%;
+                animation: neonBorderFlow 6s linear infinite;
+                border-radius: 18px;
+                z-index: -1;
+                opacity: 0.6;
+                filter: blur(1px);
             }
+
+            .pw-product-content {
+                position: relative;
+                z-index: 2;
+            }
+
+         .pw-product-name {
+    font-size: 14px; /* Matches simulator title */
+    font-weight: 800; /* Matches simulator title */
+    color: #1e293b; /* Matches simulator title */
+    margin: 0 0 12px; /* Matches simulator title */
+    text-align: center; /* Align like simulator title */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    animation: textGlow 3s ease-in-out infinite;
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
 
             .pw-rec-tags {
                 display: flex;
                 gap: 8px;
-                margin-bottom: 16px;
+                margin-bottom: 14px;
                 flex-wrap: wrap;
             }
 
             .pw-rec-tag {
-                font-size: 11px;
-                font-weight: 600;
-                padding: 4px 10px;
-                border-radius: 20px;
-                background: #eef2ff;
-                color: #4338ca;
-                white-space: nowrap;
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
             }
 
-            .pw-rec-tag.risk-low {
-                background-color: #dcfce7;
-                color: #166534;
+            .pw-rec-tag.risk-low { background: #fef3c7;
+    color: #92400e;
+    border-color: #fcd34d;
             }
 
             .pw-rec-tag.risk-medium {
-                background-color: #ffedd5;
+                background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
                 color: #9a3412;
+                border-color: rgba(154, 52, 18, 0.2);
             }
 
             .pw-rec-tag.risk-high {
-                background-color: #fee2e2;
+                background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
                 color: #991b1b;
+                border-color: rgba(153, 27, 27, 0.2);
+            }
+
+            .pw-tag-icon {
+                animation: tagIconBounce 2s ease-in-out infinite;
+                filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+            }
+
+            .pw-tag-shine {
+             display: none;
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, 
+                    transparent 0%, 
+                    rgba(255, 255, 255, 0.4) 50%, 
+                    transparent 100%);
+                animation: tagShine 4s ease-in-out infinite;
             }
 
             .pw-rec-returns {
                 text-align: right;
+                position: relative;
             }
 
-            .pw-rec-returns small {
+            .pw-returns-animated {
+                position: relative;
+                z-index: 2;
+            }
+
+            .pw-returns-animated small {
                 display: block;
-                font-size: 12px;
+                font-size: 11px;
                 color: #64748b;
-                margin-bottom: 2px;
+                margin-bottom: 4px;
+                font-weight: 600;
             }
 
-            .pw-rec-returns strong {
+            .pw-returns-value {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 6px;
                 font-size: 20px;
+                font-weight: 900;
                 color: #14b8a6;
-                font-weight: 700;
+                animation: returnsGlow 2s ease-in-out infinite;
             }
 
-            /* Calculator section */
+            .pw-return-low, .pw-return-high {
+                animation: numberPulse 3s ease-in-out infinite;
+            }
+
+            .pw-return-high {
+                animation-delay: 0.5s;
+            }
+
+            .pw-return-separator {
+                color: #64748b;
+                font-weight: 400;
+            }
+
+            .pw-returns-sparkle {
+            display: none;
+                position: absolute;
+                top: 0;
+                right: -10px;
+                font-size: 12px;
+                animation: sparkleRotate 4s linear infinite;
+            }
+
+            .pw-returns-glow {
+             display: none;
+                position: absolute;
+                top: 50%;
+                right: 0;
+                width: 100px;
+                height: 30px;
+                background: radial-gradient(ellipse at center, rgba(20, 184, 166, 0.2) 0%, transparent 70%);
+                transform: translateY(-50%);
+                animation: glowPulse 2s ease-in-out infinite;
+                border-radius: 50px;
+            }
+
+            /* Enhanced Calculator with Grid Effects - COMPACT */
             .pw-rec-calculator {
-                background: #fff;
+                position: relative;
+                background: linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.95) 0%, 
+                    rgba(248, 250, 252, 0.9) 100%);
+                border: 2px solid rgba(59, 130, 246, 0.3);
                 border-radius: 16px;
-                padding: 20px;
-                border: 1px solid #eaf0f6;
-                margin-bottom: 20px;
+                padding: 16px;
+                margin-bottom: 16px;
+                overflow: hidden;
+                animation: calculatorPulse 5s ease-in-out infinite;
+                box-shadow: 
+                    0 20px 40px rgba(59, 130, 246, 0.15),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            }
+
+            .pw-calc-glow {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.1) 0%, transparent 60%);
+                animation: calcGlowPulse 4s ease-in-out infinite;
+                border-radius: 16px;
+                pointer-events: none;
+            }
+
+            .pw-calculator-grid {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: 
+                    linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+                background-size: 15px 15px;
+                animation: calcGridMove 15s linear infinite;
+                border-radius: 16px;
+                pointer-events: none;
             }
 
             .pw-rec-calc-header {
                 text-align: center;
                 margin-bottom: 16px;
+                position: relative;
+                z-index: 2;
             }
 
             .pw-rec-calc-header h4 {
-                margin: 0 0 8px;
                 font-size: 14px;
-                font-weight: 500;
-                color: #475569;
+                font-weight: 800;
+                color: #1e293b;
+                margin: 0 0 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                position: relative;
             }
 
-            .pw-rec-calc-header h2 {
-                margin: 0;
-                font-size: 28px;
+            .pw-calc-icon {
+                animation: calcIconSpin 4s linear infinite;
+                font-size: 16px;
+                filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.4));
+            }
+
+            .pw-calc-pulse {
+                position: absolute;
+                top: 50%;
+                right: -25px;
+                transform: translateY(-50%);
+                width: 16px;
+                height: 16px;
+                border: 2px solid rgba(59, 130, 246, 0.6);
+                border-radius: 50%;
+                animation: calcPulseRing 2s ease-in-out infinite;
+            }
+
+            .pw-future-value-display {
+                position: relative;
+                z-index: 2;
+            }
+
+            .pw-value-container {
+                position: relative;
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+            }
+
+            .pw-currency-symbol {
+                font-size: 18px;
+                font-weight: 900;
+                color: #14b8a6;
+                animation: symbolGlow 3s ease-in-out infinite;
+            }
+
+            .pw-animated-value {
+                font-size: 18px;
+                font-weight: 900;
+                color: #1e293b;
+                animation: valueFlicker 2s ease-in-out infinite;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .pw-value-particles {
+                position: absolute;
+                top: 50%;
+                right: -25px;
+                transform: translateY(-50%);
+                width: 50px;
+                height: 30px;
+            }
+
+            .pw-value-particle {
+                position: absolute;
+                width: 3px;
+                height: 3px;
+                background: linear-gradient(45deg, #14b8a6, #06b6d4);
+                border-radius: 50%;
+                animation: valueParticleFloat 3s ease-in-out infinite;
+                box-shadow: 0 0 6px rgba(20, 184, 166, 0.6);
+            }
+
+            .pw-value-particle:nth-child(1) { left: 8px; animation-delay: 0s; }
+            .pw-value-particle:nth-child(2) { left: 20px; animation-delay: 1s; }
+            .pw-value-particle:nth-child(3) { left: 32px; animation-delay: 2s; }
+
+            .pw-time-display {
+                font-size: 13px;
+                color: #64748b;
                 font-weight: 700;
-                color: #0f172a;
+                animation: timeDisplayGlow 4s ease-in-out infinite;
+            }
+
+            .pw-rec-calc-slider {
+                position: relative;
+                z-index: 2;
             }
 
             .pw-rec-calc-slider label {
                 display: block;
                 font-size: 12px;
                 color: #64748b;
-                margin-bottom: 8px;
+                margin-bottom: 12px;
                 text-align: center;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+            }
+
+            .pw-slider-icon {
+                animation: sliderIconBounce 2s ease-in-out infinite;
+            }
+
+            .pw-slider-container {
+                position: relative;
+                margin-bottom: 8px;
             }
 
             #pw-time-slider {
                 width: 100%;
                 -webkit-appearance: none;
                 height: 8px;
-                background: #e2e8f0;
-                border-radius: 5px;
+                background: linear-gradient(90deg, 
+                    rgba(226, 232, 240, 0.8) 0%, 
+                    rgba(203, 213, 225, 0.8) 100%);
+                border-radius: 8px;
                 outline: none;
-                margin-top: 8px;
+                position: relative;
+                z-index: 3;
+                border: 1px solid rgba(59, 130, 246, 0.2);
+                box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
             }
 
             #pw-time-slider::-webkit-slider-thumb {
                 -webkit-appearance: none;
                 appearance: none;
-                width: 20px;
-                height: 20px;
-                background: #14b8a6;
+                width: 18px;
+                height: 18px;
+                background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
                 cursor: pointer;
                 border-radius: 50%;
+                box-shadow: 
+                    0 4px 12px rgba(59, 130, 246, 0.5),
+                    0 0 20px rgba(59, 130, 246, 0.3);
+                border: 2px solid rgba(255, 255, 255, 0.9);
+                transition: all 0.3s ease;
+            }
+
+            #pw-time-slider::-webkit-slider-thumb:hover {
+                transform: scale(1.2);
+                box-shadow: 
+                    0 6px 20px rgba(59, 130, 246, 0.7),
+                    0 0 30px rgba(59, 130, 246, 0.5);
             }
 
             #pw-time-slider::-moz-range-thumb {
-                width: 20px;
-                height: 20px;
-                background: #14b8a6;
+                width: 18px;
+                height: 18px;
+                background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
                 cursor: pointer;
                 border-radius: 50%;
-                border: none;
+                border: 2px solid rgba(255, 255, 255, 0.9);
+                box-shadow: 
+                    0 4px 12px rgba(59, 130, 246, 0.5),
+                    0 0 20px rgba(59, 130, 246, 0.3);
             }
 
-            /* Benefits section */
+            
+
+           
+            .pw-slider-labels {
+                display: flex;
+                justify-content: space-between;
+                font-size: 10px;
+                color: #94a3b8;
+                font-weight: 600;
+            }
+
+            /* Enhanced Benefits Section - COMPACT */
             .pw-rec-benefits {
-                background: #fff;
+                position: relative;
+                background: linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.95) 0%, 
+                    rgba(248, 250, 252, 0.9) 100%);
+                border: 2px solid rgba(236, 72, 153, 0.3);
                 border-radius: 16px;
-                padding: 20px;
-                border: 1px solid #eaf0f6;
+                padding: 16px;
+                overflow: hidden;
+                animation: benefitsFloat 6s ease-in-out infinite;
+                box-shadow: 
+                    0 20px 40px rgba(236, 72, 153, 0.15),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.8);
             }
 
             .pw-rec-benefits h4 {
-                margin: 0 0 16px;
-                font-size: 18px;
+                font-size: 14px;
+                font-weight: 800;
                 color: #1e293b;
-                font-weight: 600;
+                margin: 0 0 16px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                animation: benefitsTitleGlow 3s ease-in-out infinite;
+            }
+
+            .pw-benefits-icon {
+                animation: benefitsIconSpin 8s linear infinite;
+                font-size: 16px;
+                filter: drop-shadow(0 2px 4px rgba(236, 72, 153, 0.4));
             }
 
             .pw-benefit-item {
                 display: flex;
-                gap: 12px;
-                margin-bottom: 16px;
                 align-items: flex-start;
+                gap: 12px;
+                margin-bottom: 12px;
+                position: relative;
+                padding: 10px;
+                border-radius: 12px;
+                background: linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.6) 0%, 
+                    rgba(248, 250, 252, 0.4) 100%);
+                border: 1px solid rgba(236, 72, 153, 0.1);
+                overflow: hidden;
+                transition: all 0.3s ease;
+            }
+
+            .pw-benefit-item:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 16px rgba(236, 72, 153, 0.2);
+                border-color: rgba(236, 72, 153, 0.3);
             }
 
             .pw-benefit-item:last-child {
                 margin-bottom: 0;
             }
 
-            .pw-benefit-icon {
-                width: 20px;
-                height: 20px;
-                background: #14b8a6;
-                color: white;
-                border-radius: 50%;
+            .pw-benefit-1 { animation: benefitSlideIn 0.8s ease-out 0.2s both; }
+            .pw-benefit-2 { animation: benefitSlideIn 0.8s ease-out 0.4s both; }
+            .pw-benefit-3 { animation: benefitSlideIn 0.8s ease-out 0.6s both; }
+
+            .pw-benefit-icon-container {
+                position: relative;
+                width: 32px;
+                height: 32px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 12px;
-                font-weight: 600;
                 flex-shrink: 0;
-                margin-top: 2px;
             }
 
-            .pw-benefit-item strong {
+            .pw-benefit-icon {
+                font-size: 16px;
+                animation: benefitIconBounce 3s ease-in-out infinite;
+                filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+                z-index: 2;
+                position: relative;
+            }
+
+            .pw-icon-ripple {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 28px;
+                height: 28px;
+                border: 2px solid rgba(236, 72, 153, 0.4);
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+                animation: iconRipple 2s ease-in-out infinite;
+            }
+
+            .pw-icon-glow {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 40px;
+                height: 40px;
+                background: radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, transparent 70%);
+                transform: translate(-50%, -50%);
+                animation: iconGlowPulse 3s ease-in-out infinite;
+                border-radius: 50%;
+            }
+
+            .pw-benefit-content {
+                flex: 1;
+                z-index: 2;
+                position: relative;
+            }
+
+            .pw-benefit-content strong {
                 display: block;
-                font-size: 14px;
+                font-size: 13px;
+                font-weight: 800;
                 color: #1e293b;
                 margin-bottom: 4px;
-                font-weight: 600;
+                animation: benefitTitleGlow 4s ease-in-out infinite;
             }
 
-            .pw-benefit-item p {
-                font-size: 13px;
+            .pw-benefit-content p {
+                font-size: 11px;
                 color: #64748b;
                 margin: 0;
                 line-height: 1.4;
+                font-weight: 500;
             }
 
-            /* Actions - fixed at bottom */
+
+            /* Enhanced Action Buttons - COMPACT */
             .pw-rec-actions {
                 display: flex;
                 gap: 12px;
-                padding: 20px 28px;
-                background: #fff;
-                border-top: 1px solid #eaf0f6;
+                padding: 16px 20px;
+                background: linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.95) 0%, 
+                    rgba(248, 250, 252, 0.9) 100%);
+                border-top: 2px solid rgba(20, 184, 166, 0.1);
                 flex-shrink: 0;
+                position: relative;
+                overflow: hidden;
             }
 
-            .pw-rec-actions button {
-                flex-grow: 1;
+            
+
+            .pw-btn-secondary, .pw-btn-primary {
+                flex: 1;
                 border: none;
-                padding: 14px;
                 border-radius: 12px;
-                font-size: 16px;
-                font-weight: 600;
+                font-size: 13px;
+                font-weight: 700;
                 cursor: pointer;
-                transition: all 0.2s ease;
+                transition: all 0.3s ease;
+                padding: 12px 16px;
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                font-family: inherit;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
             }
 
-            #pw-change-prefs-btn {
-                background: #e2e8f0;
-                color: #334155;
+            .pw-btn-secondary {
+                background: linear-gradient(135deg, 
+                    rgba(241, 245, 249, 0.9) 0%, 
+                    rgba(226, 232, 240, 0.9) 100%);
+                color: #475569;
+                border: 2px solid rgba(71, 85, 105, 0.2);
+                box-shadow: 0 4px 12px rgba(71, 85, 105, 0.1);
             }
 
-            #pw-change-prefs-btn:hover {
-                background: #cbd5e1;
-                transform: translateY(-1px);
+            .pw-btn-secondary:hover {
+                background: linear-gradient(135deg, 
+                    rgba(226, 232, 240, 0.9) 0%, 
+                    rgba(203, 213, 225, 0.9) 100%);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(71, 85, 105, 0.2);
+                border-color: rgba(71, 85, 105, 0.3);
             }
 
-            #pw-invest-now-btn {
-                background: #14b8a6;
+            .pw-btn-primary {
+                background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
                 color: #fff;
-                box-shadow: 0 4px 14px -2px rgba(20, 184, 166, 0.4);
+                border: 2px solid rgba(20, 184, 166, 0.3);
+                box-shadow: 
+                    0 8px 25px rgba(20, 184, 166, 0.4),
+                    0 0 30px rgba(20, 184, 166, 0.2);
+                animation: primaryBtnGlow 3s ease-in-out infinite;
             }
 
-            #pw-invest-now-btn:hover {
-                background: #0d9488;
-                transform: translateY(-1px);
-                box-shadow: 0 6px 18px -2px rgba(20, 184, 166, 0.5);
+            .pw-btn-primary:hover {
+                background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+                transform: translateY(-2px) scale(1.02);
+                box-shadow: 
+                    0 10px 30px rgba(20, 184, 166, 0.6),
+                    0 0 40px rgba(20, 184, 166, 0.4);
             }
 
-            /* Animations */
-            @keyframes overlayFadeIn {
-                from {
-                    opacity: 0;
+            .pw-btn-icon {
+                font-size: 14px;
+                animation: btnIconPulse 2s ease-in-out infinite;
+                filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            }
+
+            .pw-btn-text {
+                font-weight: 800;
+                position: relative;
+                z-index: 2;
+            }
+
+            .pw-btn-ripple {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 0;
+                background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+                transform: translate(-50%, -50%);
+                border-radius: 50%;
+                animation: btnRipple 2s ease-out infinite;
+            }
+
+            .pw-btn-glow {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(45deg, 
+                    transparent 30%, 
+                    rgba(255, 255, 255, 0.1) 50%, 
+                    transparent 70%);
+                transform: translateX(-100%);
+                animation: btnGlowSweep 3s ease-in-out infinite;
+                border-radius: 12px;
+            }
+
+            .pw-btn-particles {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+            }
+
+            .pw-btn-particle {
+                position: absolute;
+                width: 3px;
+                height: 3px;
+                background: rgba(255, 255, 255, 0.8);
+                border-radius: 50%;
+                animation: btnParticleFloat 4s ease-in-out infinite;
+            }
+
+            .pw-btn-particle:nth-child(1) { left: 20%; top: 30%; animation-delay: 0s; }
+            .pw-btn-particle:nth-child(2) { left: 50%; top: 20%; animation-delay: 1s; }
+            .pw-btn-particle:nth-child(3) { left: 80%; top: 40%; animation-delay: 2s; }
+            .pw-btn-particle:nth-child(4) { left: 30%; top: 70%; animation-delay: 3s; }
+            .pw-btn-particle:nth-child(5) { left: 70%; top: 60%; animation-delay: 1.5s; }
+
+            .pw-btn-energy-field {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(ellipse at center, 
+                    rgba(20, 184, 166, 0.1) 0%, 
+                    transparent 60%);
+                animation: energyFieldPulse 2s ease-in-out infinite;
+                border-radius: 12px;
+            }
+
+            /* KEYFRAME ANIMATIONS */
+            @keyframes overlayMagicFadeIn {
+                from { opacity: 0; backdrop-filter: blur(0px); }
+                to { opacity: 1; backdrop-filter: blur(12px); }
+            }
+
+            @keyframes modalMagicEntry {
+                from { 
+                    opacity: 0; 
+                    transform: scale(0.7) rotate(-5deg) translateY(50px); 
+                    filter: drop-shadow(0 0 0 rgba(20, 184, 166, 0));
                 }
-                to {
-                    opacity: 1;
+                to { 
+                    opacity: 1; 
+                    transform: scale(1) rotate(0deg) translateY(0); 
+                    filter: drop-shadow(0 25px 50px rgba(20, 184, 166, 0.3));
                 }
             }
 
-            @keyframes promptSlideIn {
-                from {
-                    opacity: 0;
-                    transform: scale(0.95) translateY(20px);
+            @keyframes gridMove {
+                0% { transform: translate(0, 0); }
+                100% { transform: translate(20px, 20px); }
+            }
+
+            @keyframes floatingParticles {
+                0%, 100% { 
+                    transform: translateY(100vh) translateX(0px) rotate(0deg); 
+                    opacity: 0; 
                 }
-                to {
-                    opacity: 1;
-                    transform: scale(1) translateY(0);
+                10% { opacity: 1; }
+                90% { opacity: 1; }
+                50% { 
+                    transform: translateY(-20px) translateX(50px) rotate(180deg); 
+                    opacity: 1; 
                 }
             }
 
-            /* Custom scrollbar for webkit browsers */
-            .pw-rec-body::-webkit-scrollbar {
-                width: 6px;
+            @keyframes piggyBounce {
+                0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+                25% { transform: translateY(-8px) rotate(-2deg) scale(1.05); }
+                50% { transform: translateY(-4px) rotate(1deg) scale(1.1); }
+                75% { transform: translateY(-12px) rotate(-1deg) scale(1.03); }
             }
 
-            .pw-rec-body::-webkit-scrollbar-track {
-                background: #f1f5f9;
-                border-radius: 3px;
+            @keyframes coinFall {
+                0% { 
+                    transform: translateY(-50px) rotate(0deg) scale(1); 
+                    opacity: 0; 
+                }
+                10% { 
+                    opacity: 1; 
+                    transform: translateY(-30px) rotate(90deg) scale(1.1); 
+                }
+                50% { 
+                    transform: translateY(20px) rotate(180deg) scale(0.9); 
+                    opacity: 1; 
+                }
+                100% { 
+                    transform: translateY(80px) rotate(360deg) scale(0.8); 
+                    opacity: 0; 
+                }
             }
 
-            .pw-rec-body::-webkit-scrollbar-thumb {
-                background: #cbd5e1;
-                border-radius: 3px;
+            @keyframes moneyBagFloat {
+                0%, 100% { 
+                    transform: translateY(0px) rotate(0deg) scale(1); 
+                    opacity: 0.8; 
+                }
+                25% { 
+                    transform: translateY(-15px) rotate(-5deg) scale(1.05); 
+                    opacity: 1; 
+                }
+                50% { 
+                    transform: translateY(-25px) rotate(0deg) scale(1.1); 
+                    opacity: 0.9; 
+                }
+                75% { 
+                    transform: translateY(-10px) rotate(5deg) scale(1.02); 
+                    opacity: 1; 
+                }
             }
 
-            .pw-rec-body::-webkit-scrollbar-thumb:hover {
-                background: #94a3b8;
+            @keyframes sparkleOrbit {
+                0% { 
+                    transform: translate(-50%, -50%) rotate(0deg) translateX(60px) rotate(0deg); 
+                    opacity: 0; 
+                }
+                10% { opacity: 1; }
+                90% { opacity: 1; }
+                100% { 
+                    transform: translate(-50%, -50%) rotate(360deg) translateX(60px) rotate(-360deg); 
+                    opacity: 0; 
+                }
             }
 
-            /* Mobile responsive adjustments */
-            @media (max-height: 600px) {
+            @keyframes titleWordReveal {
+                0% { 
+                    opacity: 0; 
+                    transform: translateY(30px) rotateX(90deg) scale(0.8); 
+                }
+                50% { 
+                    opacity: 0.5; 
+                    transform: translateY(15px) rotateX(45deg) scale(0.9); 
+                }
+                100% { 
+                    opacity: 1; 
+                    transform: translateY(0) rotateX(0deg) scale(1); 
+                }
+            }
+
+            @keyframes iconBounce {
+                0%, 100% { transform: translateY(0px) scale(1); }
+                50% { transform: translateY(-5px) scale(1.1); }
+            }
+
+            @keyframes wealthGrowth {
+                0% { width: 0%; }
+                20% { width: 15%; }
+                40% { width: 35%; }
+                60% { width: 60%; }
+                80% { width: 85%; }
+                100% { width: 100%; }
+            }
+
+            @keyframes progressShimmer {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(200%); }
+            }
+
+            @keyframes sparkle {
+                0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
+                50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+            }
+
+            @keyframes percentageCount {
+                0% { opacity: 0; }
+                20% { opacity: 1; }
+                100% { opacity: 1; }
+            }
+
+            @keyframes aiBadgeGlow {
+                0%, 100% { 
+                    box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+                    border-color: rgba(139, 92, 246, 0.4);
+                }
+                50% { 
+                    box-shadow: 0 12px 40px rgba(139, 92, 246, 0.5);
+                    border-color: rgba(139, 92, 246, 0.6);
+                }
+            }
+
+            @keyframes aiIconSpin {
+                0% { transform: rotate(0deg) scale(1); }
+                25% { transform: rotate(90deg) scale(1.1); }
+                50% { transform: rotate(180deg) scale(1); }
+                75% { transform: rotate(270deg) scale(1.1); }
+                100% { transform: rotate(360deg) scale(1); }
+            }
+
+            @keyframes aiPulse {
+                0%, 100% { 
+                    transform: translate(-50%, -50%) scale(1); 
+                    opacity: 0.6; 
+                }
+                50% { 
+                    transform: translate(-50%, -50%) scale(1.2); 
+                    opacity: 0.3; 
+                }
+            }
+
+            @keyframes aiScanLine {
+                0% { left: -100%; }
+                50% { left: 100%; }
+                100% { left: -100%; }
+            }
+
+            @keyframes cardFloat {
+                0%, 100% { transform: translateY(0px) rotate(0deg); }
+                25% { transform: translateY(-3px) rotate(0.5deg); }
+                50% { transform: translateY(-6px) rotate(0deg); }
+                75% { transform: translateY(-2px) rotate(-0.5deg); }
+            }
+
+            @keyframes holographicShift {
+                0%, 100% { background-position: 0% 0%; }
+                25% { background-position: 100% 0%; }
+                50% { background-position: 100% 100%; }
+                75% { background-position: 0% 100%; }
+            }
+
+            @keyframes neonBorderFlow {
+                0% { background-position: 0% 0%; }
+                100% { background-position: 300% 300%; }
+            }
+
+            @keyframes textGlow {
+                0%, 100% { text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+                50% { text-shadow: 0 4px 8px rgba(30, 41, 59, 0.3); }
+            }
+
+            @keyframes tagFloat {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-2px); }
+            }
+
+            @keyframes tagIconBounce {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.2); }
+            }
+
+            @keyframes tagShine {
+                0% { left: -100%; }
+                50% { left: 100%; }
+                100% { left: -100%; }
+            }
+
+            @keyframes returnsGlow {
+                0%, 100% { 
+                    text-shadow: 0 2px 4px rgba(20, 184, 166, 0.3); 
+                    transform: scale(1); 
+                }
+                50% { 
+                    text-shadow: 0 4px 12px rgba(20, 184, 166, 0.6); 
+                    transform: scale(1.02); 
+                }
+            }
+
+            @keyframes numberPulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+
+            @keyframes sparkleRotate {
+                0% { transform: rotate(0deg) scale(1); }
+                25% { transform: rotate(90deg) scale(1.2); }
+                50% { transform: rotate(180deg) scale(1); }
+                75% { transform: rotate(270deg) scale(1.2); }
+                100% { transform: rotate(360deg) scale(1); }
+            }
+
+            @keyframes glowPulse {
+                0%, 100% { opacity: 0.2; transform: translateY(-50%) scale(1); }
+                50% { opacity: 0.4; transform: translateY(-50%) scale(1.1); }
+            }
+
+            @keyframes calculatorPulse {
+                0%, 100% { 
+                    border-color: rgba(59, 130, 246, 0.3); 
+                    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15); 
+                }
+                50% { 
+                    border-color: rgba(59, 130, 246, 0.5); 
+                    box-shadow: 0 25px 50px rgba(59, 130, 246, 0.25); 
+                }
+            }
+
+            @keyframes calcGlowPulse {
+                0%, 100% { opacity: 0.1; }
+                50% { opacity: 0.2; }
+            }
+
+            @keyframes calcGridMove {
+                0% { transform: translate(0, 0); }
+                100% { transform: translate(15px, 15px); }
+            }
+
+            @keyframes calcIconSpin {
+                0% { transform: rotate(0deg) scale(1); }
+                25% { transform: rotate(90deg) scale(1.1); }
+                50% { transform: rotate(180deg) scale(1); }
+                75% { transform: rotate(270deg) scale(1.1); }
+                100% { transform: rotate(360deg) scale(1); }
+            }
+
+            @keyframes calcPulseRing {
+                0%, 100% { 
+                    transform: translateY(-50%) scale(1); 
+                    opacity: 0.6; 
+                }
+                50% { 
+                    transform: translateY(-50%) scale(1.3); 
+                    opacity: 0.3; 
+                }
+            }
+
+            @keyframes symbolGlow {
+                0%, 100% { 
+                    color: #14b8a6; 
+                    text-shadow: 0 2px 4px rgba(20, 184, 166, 0.3); 
+                }
+                50% { 
+                    color: #06b6d4; 
+                    text-shadow: 0 4px 8px rgba(6, 182, 212, 0.5); 
+                }
+            }
+
+            @keyframes valueFlicker {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.8; }
+            }
+
+            @keyframes valueParticleFloat {
+                0%, 100% { transform: translateY(0px) scale(1); opacity: 0.6; }
+                50% { transform: translateY(-8px) scale(1.2); opacity: 1; }
+            }
+
+            @keyframes timeDisplayGlow {
+                0%, 100% { color: #64748b; }
+                50% { color: #3b82f6; }
+            }
+
+
+            @keyframes benefitsFloat {
+                0%, 100% { transform: translateY(0px) rotate(0deg); }
+                25% { transform: translateY(-2px) rotate(0.3deg); }
+                50% { transform: translateY(-4px) rotate(0deg); }
+                75% { transform: translateY(-1px) rotate(-0.3deg); }
+            }
+
+            @keyframes benefitsTitleGlow {
+                0%, 100% { 
+                    color: #1e293b; 
+                    text-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+                }
+                50% { 
+                    color: #334155; 
+                    text-shadow: 0 4px 8px rgba(30, 41, 59, 0.2); 
+                }
+            }
+
+            @keyframes benefitsIconSpin {
+                0% { transform: rotate(0deg) scale(1); }
+                25% { transform: rotate(90deg) scale(1.05); }
+                50% { transform: rotate(180deg) scale(1); }
+                75% { transform: rotate(270deg) scale(1.05); }
+                100% { transform: rotate(360deg) scale(1); }
+            }
+
+            @keyframes benefitSlideIn {
+                0% { 
+                    opacity: 0; 
+                    transform: translateX(-30px) scale(0.8); 
+                }
+                100% { 
+                    opacity: 1; 
+                    transform: translateX(0) scale(1); 
+                }
+            }
+
+            @keyframes benefitIconBounce {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+            }
+
+            @keyframes iconRipple {
+                0%, 100% { 
+                    transform: translate(-50%, -50%) scale(1); 
+                    opacity: 0.6; 
+                }
+                50% { 
+                    transform: translate(-50%, -50%) scale(1.2); 
+                    opacity: 0.3; 
+                }
+            }
+
+            @keyframes iconGlowPulse {
+                0%, 100% { opacity: 0.2; }
+                50% { opacity: 0.4; }
+            }
+
+            @keyframes benefitTitleGlow {
+                0%, 100% { 
+                    color: #1e293b; 
+                    text-shadow: 0 1px 2px rgba(0,0,0,0.1); 
+                }
+                50% { 
+                    color: #334155; 
+                    text-shadow: 0 2px 4px rgba(30, 41, 59, 0.2); 
+                }
+            }
+
+            
+
+            @keyframes primaryBtnGlow {
+                0%, 100% { 
+                    box-shadow: 
+                        0 8px 25px rgba(20, 184, 166, 0.4),
+                        0 0 30px rgba(20, 184, 166, 0.2);
+                }
+                50% { 
+                    box-shadow: 
+                        0 12px 35px rgba(20, 184, 166, 0.6),
+                        0 0 50px rgba(20, 184, 166, 0.4);
+                }
+            }
+
+            @keyframes btnIconPulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+            }
+
+            @keyframes btnRipple {
+                0% { width: 0; height: 0; opacity: 1; }
+                100% { width: 200px; height: 200px; opacity: 0; }
+            }
+
+            @keyframes btnGlowSweep {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(200%); }
+            }
+
+            @keyframes btnParticleFloat {
+                0%, 100% { opacity: 0; transform: translateY(0px); }
+                25% { opacity: 1; transform: translateY(-5px); }
+                75% { opacity: 1; transform: translateY(-8px); }
+            }
+
+            @keyframes energyFieldPulse {
+                0%, 100% { opacity: 0.1; }
+                50% { opacity: 0.2; }
+            }
+
+            /* Mobile Responsiveness */
+            @media (max-width: 480px) {
                 #pocketwisely-prompt-overlay {
-                    padding: 10px;
+                    padding: 5px 4px;
+                }
+                
+                #pocketwisely-prompt {
+                    max-width: 100%;
                 }
                 
                 .pw-rec-header {
-                    padding: 16px 20px;
+                    padding: 16px 16px 12px;
+                }
+                
+                .pw-header-animation {
+                    height: 60px;
+                    margin-bottom: 12px;
+                }
+                
+                .pw-piggy-bank {
+                    font-size: 36px;
+                }
+                
+                .pw-rec-title {
+                    font-size: 20px;
+                    margin: 10px 0;
                 }
                 
                 .pw-rec-body {
-                    padding: 16px 20px;
+                    padding: 12px 16px;
+                }
+                
+                .pw-rec-product-card,
+                .pw-rec-calculator,
+                .pw-rec-benefits {
+                    padding: 12px;
+                    margin-bottom: 12px;
                 }
                 
                 .pw-rec-actions {
-                    padding: 16px 20px;
+                    padding: 12px 16px;
+                    gap: 8px;
+                }
+                
+                .pw-btn-secondary, .pw-btn-primary {
+                    padding: 10px 12px;
+                    font-size: 12px;
                 }
             }
         </style>
     `;
-    document.body.insertAdjacentHTML('beforeend', recommendationHTML);
 
-    // --- Enhanced Calculator Logic for Months ---
-    const slider = document.getElementById('pw-time-slider');
-    const timeVal = document.getElementById('pw-time-val');
-    const futureValDisplay = document.getElementById('pw-future-val-display');
-    
-    const P = recData.investment_amount;
-    const r_low = recData.expected_return.low / 100;
-    const r_high = recData.expected_return.high / 100;
+    document.body.appendChild(document.createElement('div')).outerHTML = recommendationHTML;
 
-    function formatTimeDisplay(months) {
-        if (months < 12) {
-            return months === 1 ? '1 month' : `${months} months`;
-        } else {
-            const years = Math.floor(months / 12);
-            const remainingMonths = months % 12;
-            if (remainingMonths === 0) {
-                return years === 1 ? '1 year' :` ${years} years`;
-            } else {
-                return `${years}y ${remainingMonths}m`;
+    // Add event listeners and other JavaScript functionality
+    document.getElementById('pw-change-prefs-btn').addEventListener('click', () => {
+        // Handle change preferences
+        console.log('Change preferences clicked');
+    });
+
+    document.getElementById('pw-invest-now-btn').addEventListener('click', () => {
+        // Handle invest now
+        console.log('Invest now clicked');
+    });
+
+        const percentageEl = document.querySelector('.pw-wealth-percentage');
+    if (percentageEl) {
+        let currentPercent = 0;
+        const interval = setInterval(() => {
+            currentPercent++;
+            percentageEl.textContent = `${currentPercent}%`;
+            if (currentPercent >= 100) {
+                clearInterval(interval);
+                percentageEl.textContent = '100%';
             }
+        }, 29); // 29ms * 100 = ~2.9s, slightly faster than the bar
+    }
+
+    // Time slider functionality
+    const slider = document.getElementById('pw-time-slider');
+    const futureValDisplay = document.getElementById('pw-future-val-display');
+    const timeValDisplay = document.getElementById('pw-time-val');
+
+    slider.addEventListener('input', (e) => {
+        const months = parseInt(e.target.value);
+        const years = Math.floor(months / 12);
+        const remainingMonths = months % 12;
+        
+        let timeDisplay = '';
+        if (years > 0 && remainingMonths > 0) {
+            timeDisplay = `${years} years ${remainingMonths} months`;
+        } else if (years > 0) {
+            timeDisplay = `${years} years`;
+        } else {
+            timeDisplay = `${months} months`;
         }
-    }
-
-    function updateCalculator(months) {
-        const n = parseInt(months, 10);
-        const timeInYears = n / 12;
         
-        // Calculate future values
-        const FV_low = P * Math.pow((1 + r_low), timeInYears);
-        const FV_high = P * Math.pow((1 + r_high), timeInYears);
+        timeValDisplay.textContent = timeDisplay;
         
-        // Update display
-        timeVal.textContent = formatTimeDisplay(n);
-        futureValDisplay.textContent = `${formatCurrency(FV_low)} - ${formatCurrency(FV_high)}`;
-    }
+        // Update future value calculation based on slider
+        const baseValue = 50000; // Example base investment
+        const lowReturn = recData.expected_return.low / 100;
+        const highReturn = recData.expected_return.high / 100;
+        
+        const futureValueLow = baseValue * Math.pow(1 + lowReturn, years + remainingMonths/12);
+        const futureValueHigh = baseValue * Math.pow(1 + highReturn, years + remainingMonths/12);
+        
+        futureValDisplay.textContent = `${formatCurrency(futureValueLow)} - ${formatCurrency(futureValueHigh)}`;
+    });
 
-    if (slider) {
-        slider.addEventListener('input', (e) => updateCalculator(e.target.value));
-    }
-
-    // --- Button Logic ---
     const changePrefBtn = document.getElementById('pw-change-prefs-btn');
     const investNowBtn = document.getElementById('pw-invest-now-btn');
 
     if (changePrefBtn) {
         changePrefBtn.addEventListener('click', () => {
             console.log('Change preferences clicked, eventId:', eventId);
-            // Remove current popup first
             const overlay = document.getElementById('pocketwisely-prompt-overlay');
             if (overlay) overlay.remove();
-            // Then show investment survey
             chrome.runtime.sendMessage({ action: "showInvestmentSurvey", eventId: eventId });
         });
     }
@@ -1271,6 +2662,15 @@ function showAdvancedRecommendationPopup(recData, eventId) {
             }
         }
     });
+
+    // Close modal on background click
+    document.getElementById('pocketwisely-prompt-overlay').addEventListener('click', (e) => {
+        if (e.target.id === 'pocketwisely-prompt-overlay') {
+            document.getElementById('pocketwisely-prompt-overlay').remove();
+        }
+    });
+
+    
 }
 
 function showGamifiedAdvice(adviceData, eventId) {
