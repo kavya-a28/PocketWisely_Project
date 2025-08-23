@@ -40,23 +40,72 @@ function showFullPromptFlow(productData, eventId) {
 
         let innerHTML = '';
         if (currentQuestionIndex === -1) {
-            innerHTML = `
-                <div style="font-size: 18px; margin-bottom: 10px;">Is this a mindful purchase?</div>
-                <div style="font-size: 14px; color: #666; background-color: #f0f8ff; padding: 10px; border-radius: 8px; margin-bottom: 20px;">Instead of buying, you could invest ${productData.price} and potentially grow your wealth.</div>
-                <div style="display: flex; justify-content: center;">
-                    <button id="pw-cancel-btn" class="pw-btn-secondary">You're right, I'll wait.</button>
-                    <button id="pw-proceed-btn" class="pw-btn-primary">I really need this.</button>
-                </div>
-            `;
-        } else if (currentQuestionIndex < questions.length) {
-            const q = questions[currentQuestionIndex];
-            innerHTML = `
-                <div style="font-size: 18px; margin-bottom: 20px;">${q.text}</div>
-                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
-                    ${q.answers.map(answer => `<button class="pw-answer-btn">${answer}</button>`).join('')}
-                </div>
-            `;
-        } else {
+            innerHTML =`
+        <div class="pw-main-question">Is this a mindful purchase?</div>
+        <div class="pw-investment-hint">Instead of buying, you could invest ${productData.price} and potentially grow your wealth.</div>
+        <div class="pw-action-buttons">
+            <button id="pw-cancel-btn" class="pw-btn-secondary">You're right, I'll wait.</button>
+            <button id="pw-proceed-btn" class="pw-btn-primary">I really need this.</button>
+        </div>
+
+        <style>
+        .pw-main-question {
+                    font-size: 20px;
+                    font-weight: 600;
+                   color: #1e293b;
+                       margin-bottom: 16px;
+                   }
+
+    .pw-investment-hint {
+    font-size: 14px;
+    color: #14b8a6;
+    background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    border: 1px solid #99f6e4;
+    font-weight: 500;
+    }
+
+    .pw-action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    }
+    </style>
+    `;
+
+        } 
+        
+        else if (currentQuestionIndex < questions.length) {
+        const q = questions[currentQuestionIndex];
+         innerHTML = `
+        <div class="pw-question-title">${q.text}</div>
+        <div class="pw-question-options">
+            ${q.answers.map(answer => `<button class="pw-answer-btn">${answer}</button>`).join('')}
+        </div>
+
+        <style>
+        .pw-question-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 20px;
+    }
+
+    .pw-question-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    }
+    </style>
+    `;
+    
+        }
+
+        else {
             chrome.runtime.sendMessage({ action: "surveyCompleted", eventId: eventId, answers: userAnswers });
             innerHTML = `<div style="font-size: 16px; color: #555;">Analyzing...</div>`;
         }
@@ -88,9 +137,14 @@ function showFullPromptFlow(productData, eventId) {
     }
 
     const promptHTML = `
-        <div id="pocketwisely-prompt-overlay">
-            <div id="pocketwisely-prompt">
-                <div class="pw-header">Hold On! 🧐</div>
+    <div id="pocketwisely-prompt-overlay">
+        <div id="pocketwisely-prompt">
+            <div class="pw-modal-container">
+                <div class="pw-header">
+                    <div class="pw-header-icon">🧐</div>
+                    <h2 class="pw-title">Hold On!</h2>
+                    <p class="pw-subtitle">Take a moment to consider this purchase</p>
+                </div>
                 <div class="pw-product">
                     <img src="${productData.image}" alt="${productData.name}" />
                     <div>
@@ -101,21 +155,174 @@ function showFullPromptFlow(productData, eventId) {
                 <div id="pw-content-area"></div>
             </div>
         </div>
-        <style>
-            #pocketwisely-prompt-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 2147483647; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
-            #pocketwisely-prompt { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); width: 90%; max-width: 450px; text-align: center; animation: fadeIn 0.3s ease; }
-            @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-            .pw-header { font-size: 24px; font-weight: bold; margin-bottom: 15px; }
-            .pw-product { display: flex; align-items: center; text-align: left; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-            .pw-product img { width: 80px; height: 80px; object-fit: contain; margin-right: 15px; border-radius: 8px; }
-            .pw-product-name { font-size: 16px; font-weight: bold; max-height: 40px; overflow: hidden; }
-            .pw-product-price { font-size: 14px; color: #555; margin-top: 4px; }
-            .pw-btn-primary, .pw-btn-secondary, .pw-answer-btn { border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; }
-            .pw-btn-primary { background-color: #28a745; color: white; margin-left: 10px; }
-            .pw-btn-secondary { background-color: #f1f1f1; color: #333; }
-            .pw-answer-btn { background-color: #fff; border: 1px solid #ccc; }
-        </style>
-    `;
+    </div>
+    <style>
+        #pocketwisely-prompt-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(10, 20, 30, 0.5); 
+            backdrop-filter: blur(5px); 
+            z-index: 2147483647; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px 15px;
+            animation: overlayFadeIn 0.3s ease-out;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
+        }
+        
+        #pocketwisely-prompt { 
+            background: transparent;
+            width: 100%;
+            max-width: 480px;
+            max-height: calc(100vh - 40px);
+            text-align: center;
+            border: 0;
+            animation: promptSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .pw-modal-container {
+            background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+            border-radius: 20px;
+            text-align: center;
+            width: 100%;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            max-height: 100%;
+            overflow: hidden;
+            padding: 28px;
+        }
+        
+        .pw-header {
+            margin-bottom: 20px;
+        }
+        
+        .pw-header-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 16px;
+            box-shadow: 0 4px 20px rgba(20, 184, 166, 0.3);
+        }
+        
+        .pw-title { 
+            color: #1e293b;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 8px;
+        }
+        
+        .pw-subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        .pw-product { 
+            display: flex; 
+            align-items: center; 
+            text-align: left; 
+            margin-bottom: 24px; 
+            background: #fff;
+            border: 1px solid #eaf0f6;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        
+        .pw-product img { 
+            width: 80px; 
+            height: 80px; 
+            object-fit: contain; 
+            margin-right: 16px; 
+            border-radius: 12px;
+            background: #f8fafc;
+            padding: 8px;
+        }
+        
+        .pw-product-name { 
+            font-size: 16px; 
+            font-weight: 600; 
+            color: #1e293b;
+            max-height: 40px; 
+            overflow: hidden; 
+            margin-bottom: 4px;
+        }
+        
+        .pw-product-price { 
+            font-size: 14px; 
+            color: #14b8a6; 
+            font-weight: 600;
+        }
+        
+        .pw-btn-primary, .pw-btn-secondary, .pw-answer-btn { 
+            border: none; 
+            padding: 14px 24px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-size: 15px; 
+            font-weight: 600; 
+            transition: all 0.2s ease;
+            margin: 6px;
+        }
+        
+        .pw-btn-primary { 
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); 
+            color: white;
+            box-shadow: 0 4px 14px -2px rgba(20, 184, 166, 0.4);
+        }
+        
+        .pw-btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px -2px rgba(20, 184, 166, 0.5);
+        }
+        
+        .pw-btn-secondary { 
+            background: #e2e8f0; 
+            color: #334155; 
+        }
+        
+        .pw-btn-secondary:hover {
+            background: #cbd5e1;
+            transform: translateY(-1px);
+        }
+        
+        .pw-answer-btn { 
+            background: #fff; 
+            border: 1px solid #e2e8f0;
+            margin: 4px;
+            min-width: 120px;
+        }
+        
+        .pw-answer-btn:hover {
+            border-color: #14b8a6;
+            background: #f0fdfa;
+            transform: translateY(-1px);
+        }
+
+        @keyframes overlayFadeIn { 
+            from { opacity: 0; } 
+            to { opacity: 1; } 
+        }
+        
+        @keyframes promptSlideIn { 
+            from { opacity: 0; transform: scale(0.95) translateY(20px); } 
+            to { opacity: 1; transform: scale(1) translateY(0); } 
+        }
+    </style>
+`;
     document.body.insertAdjacentHTML('beforeend', promptHTML);
     renderContent();
 }
@@ -128,75 +335,375 @@ function showFullPromptFlow(productData, eventId) {
 /**
  * Updated showInvestmentSurvey function that properly handles profile updates
  */
+// FIXED AND RESTORED FUNCTION
 function showInvestmentSurvey(eventId) {
     // Ensure no old popups exist
     const oldPrompt = document.getElementById('pocketwisely-prompt-overlay');
     if (oldPrompt) oldPrompt.remove();
 
-    const promptContainerHTML = `
-        <div id="pocketwisely-prompt-overlay">
-            <div id="pocketwisely-prompt">
-                <div class="pw-survey-modal">
-                    <div class="pw-survey-header">
-                        <h2 class="pw-survey-title">Quick Investment Profile</h2>
-                        <p class="pw-survey-subtitle">Help us recommend the best options for you</p>
+    const surveyHTML = `
+        <div class="pw-survey-modal">
+            <div class="pw-survey-header">
+                <h2 class="pw-survey-title">Quick Investment Profile</h2>
+                <p class="pw-survey-subtitle">Help us recommend the best options for you</p>
+            </div>
+            <div class="pw-survey-body">
+                <div class="pw-survey-question">
+                    <h4>What's your risk tolerance?</h4>
+                    <div class="pw-survey-options-grid">
+                        <button class="pw-survey-option-card" data-category="risk_level" data-value="low">
+                            <div class="pw-option-icon">🛡️</div>
+                            <div class="pw-option-title">Low</div>
+                            <div class="pw-option-subtitle">Safe & Steady</div>
+                        </button>
+                        <button class="pw-survey-option-card" data-category="risk_level" data-value="medium">
+                            <div class="pw-option-icon">⚖️</div>
+                            <div class="pw-option-title">Medium</div>
+                            <div class="pw-option-subtitle">Balanced Growth</div>
+                        </button>
+                        <button class="pw-survey-option-card" data-category="risk_level" data-value="high">
+                            <div class="pw-option-icon">🚀</div>
+                            <div class="pw-option-title">High</div>
+                            <div class="pw-option-subtitle">Maximum Returns</div>
+                        </button>
                     </div>
-                    <div class="pw-survey-body">
-                        <div class="pw-survey-question">
-                            <h3 class="pw-survey-question-title">What's your risk tolerance?</h3>
-                            <div class="pw-survey-options">
-                                <button class="pw-survey-option" data-category="risk_level" data-value="low"><div class="pw-checkmark">✔</div><span class="emoji">🛡️</span><strong>Low</strong><small>Safe & Steady</small></button>
-                                <button class="pw-survey-option" data-category="risk_level" data-value="medium"><div class="pw-checkmark">✔</div><span class="emoji">⚖️</span><strong>Medium</strong><small>Balanced Growth</small></button>
-                                <button class="pw-survey-option" data-category="risk_level" data-value="high"><div class="pw-checkmark">✔</div><span class="emoji">🚀</span><strong>High</strong><small>Maximum Returns</small></button>
-                            </div>
-                        </div>
-                        <div class="pw-survey-question">
-                            <h3 class="pw-survey-question-title">Investment duration preference?</h3>
-                            <div class="pw-survey-options">
-                                <button class="pw-survey-option" data-category="duration" data-value="short"><div class="pw-checkmark">✔</div><span class="emoji">⏰</span><strong>Short</strong><small>(1-2 years)</small></button>
-                                <button class="pw-survey-option" data-category="duration" data-value="medium"><div class="pw-checkmark">✔</div><span class="emoji">📅</span><strong>Medium</strong><small>(3-5 years)</small></button>
-                                <button class="pw-survey-option" data-category="duration" data-value="long"><div class="pw-checkmark">✔</div><span class="emoji">🏗️</span><strong>Long</strong><small>(5+ years)</small></button>
-                            </div>
-                        </div>
-                        <div class="pw-survey-question">
-                            <h3 class="pw-survey-question-title">Current financial situation?</h3>
-                            <div class="pw-survey-options">
-                                <button class="pw-survey-option" data-category="financial_stability" data-value="tough"><div class="pw-checkmark">✔</div><span class="emoji">😰</span><strong>Tough</strong><small>Limited Budget</small></button>
-                                <button class="pw-survey-option" data-category="financial_stability" data-value="comfort"><div class="pw-checkmark">✔</div><span class="emoji">😊</span><strong>Comfortable</strong><small>Stable Income</small></button>
-                                <button class="pw-survey-option" data-category="financial_stability" data-value="flexible"><div class="pw-checkmark">✔</div><span class="emoji">💪</span><strong>Flexible</strong><small>Extra Savings</small></button>
-                            </div>
-                        </div>
+                </div>
+                <div class="pw-survey-question">
+                    <h4>Investment duration preference?</h4>
+                    <div class="pw-survey-options-grid">
+                        <button class="pw-survey-option-card" data-category="duration" data-value="short">
+                            <div class="pw-option-icon">⏰</div>
+                            <div class="pw-option-title">Short</div>
+                            <div class="pw-option-subtitle">(1-2 years)</div>
+                        </button>
+                        <button class="pw-survey-option-card" data-category="duration" data-value="medium">
+                            <div class="pw-option-icon">🗓️</div>
+                            <div class="pw-option-title">Medium</div>
+                            <div class="pw-option-subtitle">(3-5 years)</div>
+                        </button>
+                        <button class="pw-survey-option-card" data-category="duration" data-value="long">
+                            <div class="pw-option-icon">🏛️</div>
+                            <div class="pw-option-title">Long</div>
+                            <div class="pw-option-subtitle">(5+ years)</div>
+                        </button>
                     </div>
-                    <div class="pw-survey-actions">
-                        <button class="pw-survey-cancel" id="pw-survey-cancel-btn">Cancel</button>
-                        <button class="pw-survey-submit" id="surveySubmit">Get Recommendations</button>
+                </div>
+                <div class="pw-survey-question">
+                    <h4>Current financial situation?</h4>
+                    <div class="pw-survey-options-grid">
+                        <button class="pw-survey-option-card" data-category="financial_stability" data-value="unstable">
+                            <div class="pw-option-icon">😰</div>
+                            <div class="pw-option-title">Tough</div>
+                            <div class="pw-option-subtitle">Limited Budget</div>
+                        </button>
+                        <button class="pw-survey-option-card" data-category="financial_stability" data-value="stable">
+                            <div class="pw-option-icon">😊</div>
+                            <div class="pw-option-title">Comfortable</div>
+                            <div class="pw-option-subtitle">Stable Income</div>
+                        </button>
+                        <button class="pw-survey-option-card" data-category="financial_stability" data-value="moderate">
+                            <div class="pw-option-icon">💪</div>
+                            <div class="pw-option-title">Flexible</div>
+                            <div class="pw-option-subtitle">Extra Savings</div>
+                        </button>
                     </div>
                 </div>
             </div>
+            <div class="pw-survey-actions">
+                <button id="pw-survey-cancel-btn">Cancel</button>
+                <button id="surveySubmit">Get Recommendations</button>
+            </div>
         </div>
-        <style>
-            #pocketwisely-prompt-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(10,20,30,.5);backdrop-filter:blur(5px);z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:20px 15px;animation:overlayFadeIn .3s ease-out}
-            #pocketwisely-prompt{background:transparent;border-radius:20px;width:100%;max-width:520px;text-align:center;border:0;animation:promptSlideIn .4s cubic-bezier(.34,1.56,.64,1);max-height:calc(100vh - 40px);display:flex; flex-direction:column;}
-            .pw-survey-modal{background:linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;border-radius:20px;text-align:left;display:flex;flex-direction:column;width:100%;height:100%;overflow:hidden;}
-            .pw-survey-header{padding:24px 28px 20px;text-align:center;flex-shrink:0;border-bottom:1px solid #eaf0f6}.pw-survey-title{color:#1e293b;font-size:20px;font-weight:700;margin:0 0 6px}.pw-survey-subtitle{color:#64748b;font-size:14px;margin:0}
-            
-            /* ✅ FIXED: This allows the body of the survey to scroll */
-            .pw-survey-body{overflow-y:auto;padding:20px 28px}
-
-            .pw-survey-question{margin-bottom:16px}.pw-survey-question-title{color:#334155;font-size:15px;font-weight:600;margin:0 0 12px}.pw-survey-options{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.pw-survey-option{background:#fff;border:1px solid #eaf0f6;color:#475569;padding:12px 10px;border-radius:12px;cursor:pointer;transition:all .2s ease-out;text-align:center;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;box-shadow:0 2px 4px rgba(0,0,0,.02)}
-            .pw-survey-option.selected{border-color:#000; background:#f0fdfa; transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,.1);}
-            .pw-survey-option:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(0,0,0,.08);border-color:#d1dbe5}.pw-survey-option .emoji{font-size:20px;line-height:1}.pw-survey-option strong{font-size:14px;font-weight:600;color:#1e293b;line-height:1.2;margin:4px 0}.pw-survey-option small{font-size:12px;color:#64748b;line-height:1.2}.pw-survey-option.selected strong,.pw-survey-option.selected small{color:inherit}.pw-checkmark{position:absolute;top:8px;right:8px;width:18px;height:18px;background:#14b8a6;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;transform:scale(0) rotate(-180deg);transition:transform .3s cubic-bezier(.34,1.56,.64,1);opacity:0;font-size:10px}.pw-survey-option.selected .pw-checkmark{transform:scale(1) rotate(0deg);opacity:1}.pw-survey-actions{display:flex;gap:12px;padding:20px 28px;justify-content:flex-end;flex-shrink:0;border-top:1px solid #eaf0f6;background:linear-gradient(180deg, #f7f9fc 0%, #f1f5f9 100%)}.pw-survey-cancel,.pw-survey-submit{border:none;padding:12px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s ease}.pw-survey-cancel{background:#eaf0f6;color:#475569}.pw-survey-cancel:hover{background:#d1dbe5}.pw-survey-submit{background:#14b8a6;color:#fff;opacity:.5;pointer-events:none}.pw-survey-submit.enabled{opacity:1;pointer-events:auto;box-shadow:0 4px 14px -2px rgba(20,184,166,.4)}.pw-survey-submit.enabled:hover{background:#0d9488;transform:translateY(-1px)}
-            @keyframes overlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
-            @keyframes promptSlideIn { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        </style>
     `;
+
+    const promptContainerHTML = `
+    <div id="pocketwisely-prompt-overlay">
+        <div id="pocketwisely-prompt">${surveyHTML}</div>
+    </div>
+    <style>
+        #pocketwisely-prompt-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(10, 20, 30, 0.6); 
+            backdrop-filter: blur(8px); 
+            z-index: 2147483647; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px 15px; 
+            animation: overlayFadeIn 0.3s ease-out; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+        }
+        #pocketwisely-prompt { 
+            background: transparent; 
+            width: 100%; 
+            max-width: 560px; 
+            max-height: calc(100vh - 40px); 
+            text-align: center; 
+            border: 0; 
+            animation: promptSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        .pw-survey-modal { 
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); 
+            border-radius: 24px; 
+            text-align: center; 
+            width: 100%; 
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.25); 
+            display: flex; 
+            flex-direction: column; 
+            max-height: 100%; 
+            overflow: hidden; 
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        .pw-survey-header { 
+            padding: 32px 28px 24px; 
+            text-align: center; 
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); 
+            border-bottom: 1px solid #e2e8f0; 
+        }
+        .pw-survey-title { 
+            color: #1e293b; 
+            font-size: 28px; 
+            font-weight: 700; 
+            margin: 0 0 8px; 
+            letter-spacing: -0.5px;
+        }
+        .pw-survey-subtitle { 
+            color: #64748b; 
+            font-size: 16px; 
+            margin: 0; 
+            line-height: 1.5; 
+            font-weight: 400;
+        }
+
+        .pw-survey-body { 
+            padding: 24px 28px; 
+            overflow-y: auto; 
+            flex: 1;
+            max-height: 400px;
+        }
+        .pw-survey-question { 
+            margin-bottom: 32px; 
+        }
+        .pw-survey-question:last-child { 
+            margin-bottom: 0; 
+        }
+        .pw-survey-question h4 { 
+            color: #334155; 
+            font-size: 20px; 
+            margin: 0 0 20px; 
+            font-weight: 600; 
+            text-align: center;
+        }
+        
+        .pw-survey-options-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 16px; 
+            justify-content: center;
+        }
+        
+        .pw-survey-option-card { 
+            background: #ffffff; 
+            border: 2px solid #e2e8f0; 
+            color: #334155; 
+            padding: 24px 16px; 
+            border-radius: 16px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            text-align: center; 
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pw-survey-option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.05) 0%, rgba(20, 184, 166, 0.02) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .pw-survey-option-card:hover { 
+            border-color: #14b8a6; 
+            transform: translateY(-4px); 
+            box-shadow: 0 12px 32px -8px rgba(20, 184, 166, 0.3);
+        }
+        
+        .pw-survey-option-card:hover::before {
+            opacity: 1;
+        }
+        
+        .pw-survey-option-card.selected { 
+            border-color: #14b8a6; 
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); 
+            color: #0f766e; 
+            font-weight: 600; 
+            box-shadow: 0 8px 25px rgba(20, 184, 166, 0.25); 
+            transform: translateY(-2px);
+        }
+
+        .pw-option-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            display: block;
+            line-height: 1;
+        }
+        
+        .pw-option-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: inherit;
+        }
+        
+        .pw-option-subtitle {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+        
+        .pw-survey-option-card.selected .pw-option-subtitle {
+            color: #14b8a6;
+        }
+
+        .pw-survey-actions { 
+            display: flex; 
+            gap: 16px; 
+            padding: 24px 28px; 
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); 
+            border-top: 1px solid #e2e8f0; 
+        }
+        .pw-survey-actions button { 
+            flex-grow: 1; 
+            border: none; 
+            padding: 16px 24px; 
+            border-radius: 14px; 
+            font-size: 16px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            font-family: inherit;
+        }
+        #pw-survey-cancel-btn { 
+            background: #f1f5f9; 
+            color: #475569; 
+            border: 1px solid #e2e8f0;
+        }
+        #pw-survey-cancel-btn:hover { 
+            background: #e2e8f0; 
+            transform: translateY(-1px);
+        }
+        #surveySubmit { 
+            background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%); 
+            color: #fff; 
+            cursor: not-allowed; 
+            opacity: 0.6;
+        }
+        #surveySubmit.enabled { 
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); 
+            color: #fff; 
+            box-shadow: 0 6px 20px -4px rgba(20, 184, 166, 0.4); 
+            cursor: pointer; 
+            opacity: 1;
+        }
+        #surveySubmit.enabled:hover { 
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 25px -4px rgba(20, 184, 166, 0.5);
+        }
+
+        @keyframes overlayFadeIn { 
+            from { opacity: 0; } 
+            to { opacity: 1; } 
+        }
+        @keyframes promptSlideIn { 
+            from { opacity: 0; transform: scale(0.95) translateY(20px); } 
+            to { opacity: 1; transform: scale(1) translateY(0); } 
+        }
+        
+                    /* Custom scrollbar for webkit browsers */
+            .pw-survey-body::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .pw-survey-body::-webkit-scrollbar-track {
+                background: #f1f5f9;
+                border-radius: 3px;
+            }
+
+            .pw-survey-body::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 3px;
+            }
+
+            .pw-survey-body::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
+            }
+            
+            /* Mobile responsive */
+        @media (max-width: 600px) {
+            .pw-survey-options-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .pw-survey-option-card {
+                min-height: 120px;
+                padding: 20px 16px;
+            }
+            
+            .pw-option-icon {
+                font-size: 28px;
+                margin-bottom: 10px;
+            }
+            
+            .pw-option-title {
+                font-size: 16px;
+            }
+            
+            .pw-survey-header {
+                padding: 24px 20px 20px;
+            }
+            
+            .pw-survey-title {
+                font-size: 24px;
+            }
+            
+            .pw-survey-body {
+                padding: 20px;
+            }
+            
+            .pw-survey-actions {
+                padding: 20px;
+                gap: 12px;
+            }
+        }
+    </style>
+`;
     document.body.insertAdjacentHTML('beforeend', promptContainerHTML);
 
-    // --- SELF-CONTAINED LOGIC ---
+    // --- SELF-CONTAINED LOGIC (unchanged) ---
     const surveyAnswers = { risk_level: null, duration: null, financial_stability: null };
     const submitBtn = document.getElementById('surveySubmit');
     const cancelBtn = document.getElementById('pw-survey-cancel-btn');
-    const optionButtons = document.querySelectorAll('.pw-survey-option');
+    const optionButtons = document.querySelectorAll('.pw-survey-option-card');
 
     function checkSurveyComplete() {
         const allAnswered = Object.values(surveyAnswers).every(answer => answer !== null);
@@ -214,7 +721,7 @@ function showInvestmentSurvey(eventId) {
             surveyAnswers[category] = value;
             
             const questionContainer = button.closest('.pw-survey-question');
-            questionContainer.querySelectorAll('.pw-survey-option').forEach(opt => opt.classList.remove('selected'));
+            questionContainer.querySelectorAll('.pw-survey-option-card').forEach(opt => opt.classList.remove('selected'));
             button.classList.add('selected');
 
             checkSurveyComplete();
@@ -228,9 +735,10 @@ function showInvestmentSurvey(eventId) {
             // Show loading state
             const contentEl = document.querySelector('#pocketwisely-prompt .pw-survey-modal');
             if(contentEl) {
-                contentEl.innerHTML = `<div style="font-size: 16px; color: #555; padding: 100px 20px; text-align: center;">
-                    <div style="margin-bottom: 10px;">🔄</div>
-                    Finding the best investment for you...
+                contentEl.innerHTML = `<div style="font-size: 18px; color: #64748b; padding: 80px 20px; text-align: center;">
+                    <div style="margin-bottom: 16px; font-size: 48px;">🔄</div>
+                    <div style="font-weight: 600; margin-bottom: 8px; color: #1e293b;">Finding the best investment for you...</div>
+                    <div style="font-size: 14px;">This will just take a moment</div>
                 </div>`;
             }
             
@@ -248,6 +756,7 @@ function showInvestmentSurvey(eventId) {
         document.getElementById('pocketwisely-prompt-overlay')?.remove();
     });
 }
+
 
 // --- NEW INJECTABLE FUNCTION ---
 // --- UPDATED INJECTABLE FUNCTION WITH SCROLLABLE DESIGN ---
@@ -291,7 +800,6 @@ function showAdvancedRecommendationPopup(recData, eventId) {
                             </div>
                         </div>
 
-                        <!-- Additional Content for Scroll Testing -->
                         <div class="pw-rec-benefits">
                             <h4>Why This Investment?</h4>
                             <div class="pw-benefit-item">
@@ -1066,8 +1574,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                             if (overlay) {
                                 overlay.innerHTML = `
                                     <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-                                               background: white; padding: 30px; border-radius: 20px; text-align: center;
-                                               box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 2147483647;">
+                                                 background: white; padding: 30px; border-radius: 20px; text-align: center;
+                                                 box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 2147483647;">
                                         <h3 style="color: #ef4444; margin-bottom: 10px;">❌ Error</h3>
                                         <p style="margin-bottom: 20px; color: #666;">Unable to get recommendation. Please try again.</p>
                                         <button onclick="this.closest('#pocketwisely-prompt-overlay').remove()" 
@@ -1093,8 +1601,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                         if (overlay) {
                             overlay.innerHTML = `
                                 <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-                                           background: white; padding: 30px; border-radius: 20px; text-align: center;
-                                           box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 2147483647;">
+                                            background: white; padding: 30px; border-radius: 20px; text-align: center;
+                                            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 2147483647;">
                                     <h3 style="color: #ef4444; margin-bottom: 10px;">❌ Connection Error</h3>
                                     <p style="margin-bottom: 20px; color: #666;">Unable to update preferences. Please check your connection.</p>
                                     <button onclick="this.closest('#pocketwisely-prompt-overlay').remove()" 
