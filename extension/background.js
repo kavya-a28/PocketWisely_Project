@@ -791,12 +791,12 @@ function showAdvancedRecommendationPopup(recData, eventId) {
 
                         <div class="pw-rec-calculator">
                             <div class="pw-rec-calc-header">
-                                <h4>Potential Growth in <span id="pw-years-val">${recData.time_horizon_years}</span> years</h4>
+                                <h4>Potential Growth in <span id="pw-time-val">${recData.time_horizon_display || recData.time_horizon_years + ' years'}</span></h4>
                                 <h2 id="pw-future-val-display">${formatCurrency(recData.future_values.low)} - ${formatCurrency(recData.future_values.high)}</h2>
                             </div>
                             <div class="pw-rec-calc-slider">
-                                <label for="pw-years-slider">Adjust Time Horizon (1-20 years)</label>
-                                <input type="range" min="1" max="20" value="${recData.time_horizon_years}" id="pw-years-slider">
+                                <label for="pw-time-slider">Adjust Time Horizon (30 days to 10 years)</label>
+                                <input type="range" min="0" max="120" value="${recData.time_horizon_months || recData.time_horizon_years * 12}" id="pw-time-slider">
                             </div>
                         </div>
 
@@ -813,7 +813,7 @@ function showAdvancedRecommendationPopup(recData, eventId) {
                                 <span class="pw-benefit-icon">✓</span>
                                 <div>
                                     <strong>Optimal Time Horizon</strong>
-                                    <p>Perfect for your ${recData.time_horizon_years}-year investment timeline.</p>
+                                    <p>Perfect for your ${recData.time_horizon_display || recData.time_horizon_years + '-year'} investment timeline.</p>
                                 </div>
                             </div>
                             <div class="pw-benefit-item">
@@ -1008,7 +1008,7 @@ function showAdvancedRecommendationPopup(recData, eventId) {
                 text-align: center;
             }
 
-            #pw-years-slider {
+            #pw-time-slider {
                 width: 100%;
                 -webkit-appearance: none;
                 height: 8px;
@@ -1018,7 +1018,7 @@ function showAdvancedRecommendationPopup(recData, eventId) {
                 margin-top: 8px;
             }
 
-            #pw-years-slider::-webkit-slider-thumb {
+            #pw-time-slider::-webkit-slider-thumb {
                 -webkit-appearance: none;
                 appearance: none;
                 width: 20px;
@@ -1028,7 +1028,7 @@ function showAdvancedRecommendationPopup(recData, eventId) {
                 border-radius: 50%;
             }
 
-            #pw-years-slider::-moz-range-thumb {
+            #pw-time-slider::-moz-range-thumb {
                 width: 20px;
                 height: 20px;
                 background: #14b8a6;
@@ -1198,20 +1198,39 @@ function showAdvancedRecommendationPopup(recData, eventId) {
     `;
     document.body.insertAdjacentHTML('beforeend', recommendationHTML);
 
-    // --- Calculator Logic ---
-    const slider = document.getElementById('pw-years-slider');
-    const yearsVal = document.getElementById('pw-years-val');
+    // --- Enhanced Calculator Logic for Months ---
+    const slider = document.getElementById('pw-time-slider');
+    const timeVal = document.getElementById('pw-time-val');
     const futureValDisplay = document.getElementById('pw-future-val-display');
     
     const P = recData.investment_amount;
     const r_low = recData.expected_return.low / 100;
     const r_high = recData.expected_return.high / 100;
 
-    function updateCalculator(years) {
-        const n = parseInt(years, 10);
-        const FV_low = P * Math.pow((1 + r_low), n);
-        const FV_high = P * Math.pow((1 + r_high), n);
-        yearsVal.textContent = n;
+    function formatTimeDisplay(months) {
+        if (months < 12) {
+            return months === 1 ? '1 month' : `${months} months`;
+        } else {
+            const years = Math.floor(months / 12);
+            const remainingMonths = months % 12;
+            if (remainingMonths === 0) {
+                return years === 1 ? '1 year' :` ${years} years`;
+            } else {
+                return `${years}y ${remainingMonths}m`;
+            }
+        }
+    }
+
+    function updateCalculator(months) {
+        const n = parseInt(months, 10);
+        const timeInYears = n / 12;
+        
+        // Calculate future values
+        const FV_low = P * Math.pow((1 + r_low), timeInYears);
+        const FV_high = P * Math.pow((1 + r_high), timeInYears);
+        
+        // Update display
+        timeVal.textContent = formatTimeDisplay(n);
         futureValDisplay.textContent = `${formatCurrency(FV_low)} - ${formatCurrency(FV_high)}`;
     }
 
@@ -1274,11 +1293,25 @@ function showGamifiedAdvice(adviceData, eventId) {
             </div>
         `;
     } else {
+        // ENHANCED SIMPLE POPUP STYLING
         adviceHTML = `
-            <div class="pw-mindful-question">${advice.question}</div>
-            <div class="pw-buttons">
-                <button id="pw-cancel-final" class="pw-btn-secondary">I'll wait</button>
-                <button id="pw-proceed-anyway" class="pw-btn-primary">Proceed with Purchase</button>
+            <div class="pw-simple-header">
+                <div class="pw-thinking-icon">🤔</div>
+                <h2 class="pw-simple-title">Take a Moment to Consider</h2>
+            </div>
+            <div class="pw-mindful-question">
+                <div class="pw-question-icon">💭</div>
+                <p class="pw-question-text">${advice.question}</p>
+            </div>
+            <div class="pw-simple-buttons">
+                <button id="pw-cancel-final" class="pw-btn-wait">
+                    <span class="pw-btn-icon">⏰</span>
+                    <span class="pw-btn-text">I'll Wait</span>
+                </button>
+                <button id="pw-proceed-anyway" class="pw-btn-proceed">
+                    <span class="pw-btn-icon">✓</span>
+                    <span class="pw-btn-text">Proceed with Purchase</span>
+                </button>
             </div>
         `;
     }
@@ -1290,12 +1323,305 @@ function showGamifiedAdvice(adviceData, eventId) {
             </div>
         </div>
         <style>
-            #pocketwisely-prompt-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(10,20,30,.5);backdrop-filter:blur(5px);z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:40px 15px;animation:overlayFadeIn .3s ease-out}#pocketwisely-prompt{background:#fff;border-radius:20px;box-shadow:0 20px 60px -10px rgba(0,0,0,.25);width:100%;max-width:500px;text-align:center;border:0;animation:promptSlideIn .4s cubic-bezier(.34,1.56,.64,1);max-height:calc(100vh - 80px);overflow:hidden;display:flex; padding: 28px;}
-            .pw-alert-header{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px}.pw-warning-icon{width:24px;height:24px;background:#fbbf24;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;box-shadow:0 2px 8px rgba(251,191,36,.4)}.pw-alert-title{color:#1f2937;font-size:24px;font-weight:700;margin:0}.pw-alert-subtitle{color:#4b5563;font-size:16px;line-height:1.6;margin:0 0 28px;text-align:center}.pw-button-container{display:flex;gap:12px;flex-direction:column;margin-top:0}.pw-invest-btn{background:#2dd4bf;color:#fff;border:none;padding:16px 20px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s ease;box-shadow:0 4px 15px -2px rgba(45,212,191,.3)}.pw-invest-btn:hover{background:#14b8a6;transform:translateY(-2px);box-shadow:0 6px 20px -2px rgba(45,212,191,.4)}.pw-proceed-btn{background:#f3f4f6;color:#4b5563;border:none;padding:14px 20px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s ease}.pw-proceed-btn:hover{background:#e5e7eb}
+            #pocketwisely-prompt-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(10, 20, 30, 0.6);
+                backdrop-filter: blur(8px);
+                z-index: 2147483647;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px 15px;
+                animation: overlayFadeIn 0.3s ease-out;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            }
+
+            #pocketwisely-prompt {
+                background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+                border-radius: 20px;
+                box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.25);
+                width: 100%;
+                max-width: 450px;
+                text-align: center;
+                border: 0;
+                animation: promptSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                max-height: calc(100vh - 40px);
+                overflow: hidden;
+                border: 1px solid rgba(255, 255, 255, 0.8);
+            }
+
+            #pw-content-area {
+                padding: 32px 28px;
+            }
+
+            /* Simple popup specific styles */
+            .pw-simple-header {
+                text-align: center;
+                margin-bottom: 24px;
+            }
+
+            .pw-thinking-icon {
+                width: 56px;
+                height: 56px;
+                background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 28px;
+                margin: 0 auto 16px;
+                box-shadow: 0 6px 20px rgba(20, 184, 166, 0.3);
+                animation: gentle-pulse 2s infinite;
+            }
+
+            @keyframes gentle-pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+
+            .pw-simple-title {
+                color: #1e293b;
+                font-size: 24px;
+                font-weight: 700;
+                margin: 0;
+                letter-spacing: -0.5px;
+            }
+
+            .pw-mindful-question {
+                background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+                border: 1px solid #a7f3d0;
+                border-radius: 16px;
+                padding: 24px 20px;
+                margin-bottom: 28px;
+                display: flex;
+                align-items: flex-start;
+                gap: 16px;
+                text-align: left;
+            }
+
+            .pw-question-icon {
+                font-size: 24px;
+                flex-shrink: 0;
+                margin-top: 2px;
+            }
+
+            .pw-question-text {
+                color: #134e4a;
+                font-size: 16px;
+                font-weight: 500;
+                margin: 0;
+                line-height: 1.5;
+                flex: 1;
+            }
+
+            .pw-simple-buttons {
+                display: flex;
+                gap: 12px;
+                justify-content: center;
+            }
+
+            .pw-btn-wait, .pw-btn-proceed {
+                border: none;
+                border-radius: 14px;
+                cursor: pointer;
+                font-size: 15px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 16px 24px;
+                flex: 1;
+                justify-content: center;
+                font-family: inherit;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .pw-btn-wait::before,
+            .pw-btn-proceed::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+                transform: translateX(-100%);
+                transition: transform 0.6s ease;
+            }
+
+            .pw-btn-wait:hover::before,
+            .pw-btn-proceed:hover::before {
+                transform: translateX(100%);
+            }
+
+            .pw-btn-wait {
+                background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+                color: #475569;
+                border: 1px solid #cbd5e1;
+            }
+
+            .pw-btn-wait:hover {
+                background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px -8px rgba(71, 85, 105, 0.3);
+            }
+
+            .pw-btn-proceed {
+                background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+                color: white;
+                box-shadow: 0 4px 15px -2px rgba(20, 184, 166, 0.4);
+            }
+
+            .pw-btn-proceed:hover {
+                background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px -2px rgba(20, 184, 166, 0.5);
+            }
+
+            .pw-btn-icon {
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+            }
+
+            .pw-btn-text {
+                font-weight: 600;
+            }
+
+            /* Original impulsive popup styles (unchanged) */
+            .pw-alert-header {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+
+            .pw-warning-icon {
+                width: 24px;
+                height: 24px;
+                background: #fbbf24;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                font-weight: 700;
+                font-size: 14px;
+                box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+            }
+
+            .pw-alert-title {
+                color: #1f2937;
+                font-size: 24px;
+                font-weight: 700;
+                margin: 0;
+            }
+
+            .pw-alert-subtitle {
+                color: #4b5563;
+                font-size: 16px;
+                line-height: 1.6;
+                margin: 0 0 28px;
+                text-align: center;
+            }
+
+            .pw-button-container {
+                display: flex;
+                gap: 12px;
+                flex-direction: column;
+                margin-top: 0;
+            }
+
+            .pw-invest-btn {
+                background: #2dd4bf;
+                color: #fff;
+                border: none;
+                padding: 16px 20px;
+                border-radius: 12px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                transition: all 0.2s ease;
+                box-shadow: 0 4px 15px -2px rgba(45, 212, 191, 0.3);
+            }
+
+            .pw-invest-btn:hover {
+                background: #14b8a6;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px -2px rgba(45, 212, 191, 0.4);
+            }
+
+            .pw-proceed-btn {
+                background: #f3f4f6;
+                color: #4b5563;
+                border: none;
+                padding: 14px 20px;
+                border-radius: 12px;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .pw-proceed-btn:hover {
+                background: #e5e7eb;
+            }
+
+            /* Animations */
+            @keyframes overlayFadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+
+            @keyframes promptSlideIn {
+                from { opacity: 0; transform: scale(0.95) translateY(20px); }
+                to { opacity: 1; transform: scale(1) translateY(0); }
+            }
+
+            /* Mobile responsive */
+            @media (max-width: 480px) {
+                #pocketwisely-prompt {
+                    max-width: 95%;
+                    margin: 10px;
+                }
+
+                #pw-content-area {
+                    padding: 24px 20px;
+                }
+
+                .pw-simple-buttons {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+
+                .pw-btn-wait, .pw-btn-proceed {
+                    padding: 14px 20px;
+                }
+
+                .pw-mindful-question {
+                    padding: 20px 16px;
+                }
+
+                .pw-simple-title {
+                    font-size: 20px;
+                }
+            }
         </style>
     `;
     document.body.insertAdjacentHTML('beforeend', promptContainerHTML);
 
+    // Your existing event listener logic remains unchanged
     if (advice.type === 'impulsive') {
         const investBtn = document.getElementById('pw-invest-btn-main');
         if (investBtn) {
@@ -1314,6 +1640,50 @@ function showGamifiedAdvice(adviceData, eventId) {
             });
         }
     }
+    else {
+    // Event listeners for simple popup (non-impulsive)
+    const waitBtn = document.getElementById('pw-cancel-final');
+    const proceedBtn = document.getElementById('pw-proceed-anyway');
+    
+    if (waitBtn) {
+        waitBtn.addEventListener('click', () => {
+            // Close current popup
+            document.getElementById('pocketwisely-prompt-overlay')?.remove();
+            
+            // Log that user decided to wait
+            chrome.runtime.sendMessage({ 
+                action: "logFinalDecision", 
+                eventId: eventId, 
+                decision: "waited_after_consideration" 
+            });
+            
+            // Show purchase page again after a short delay
+            setTimeout(() => {
+                // You can redirect to the purchase page or show a message
+                window.location.reload(); // Refreshes the page to show original state
+            }, 1000);
+        });
+    }
+    
+    if (proceedBtn) {
+        proceedBtn.addEventListener('click', () => {
+            // Close popup
+            document.getElementById('pocketwisely-prompt-overlay')?.remove();
+            
+            // Log final decision
+            chrome.runtime.sendMessage({ 
+                action: "logFinalDecision", 
+                eventId: eventId, 
+                decision: "proceeded_after_consideration" 
+            });
+            
+            // Unlock the add to cart button (this function should already exist in your code)
+            chrome.runtime.sendMessage({ 
+                action: "unlockAddToCartButton" 
+            });
+        });
+    }
+}
 }
 
 function unlockButton() {
@@ -1376,7 +1746,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 args: [advice, request.eventId]
             });
         }
-        
+
+        else if (request.action === "unlockAddToCartButton") {
+    // Unlock the add to cart button on the current tab
+    chrome.scripting.executeScript({ 
+        target: { tabId: tab.id }, 
+        func: unlockButton 
+    });
+    }
         // CORRECTED handleInvestmentFlow handler
         else if (request.action === "handleInvestmentFlow") {
             try {
